@@ -122,6 +122,34 @@ class Cube:
             self.blue[6:]=self.orange[6:]
             self.orange[6:] = row
             self.yellow = rot(self.yellow)
+        elif letra=='F':
+            aux = self.white[6:]
+            self.white[6:] = reversed(self.orange[2::3])
+            self.orange[2::3]=self.yellow[0:3]
+            self.yellow[0:3] = reversed(self.red[0::3])
+            self.red[0::3] = aux
+            self.green = rot(self.green)
+        elif letra=='B':
+            aux = reversed(self.white[0:3])
+            self.white[0:3] = self.red[2::3]
+            self.red[2::3] = reversed(self.yellow[6:])
+            self.yellow[6:]= self.orange[0::3]
+            self.orange[0::3]=aux
+            self.blue = rot(self.blue)
+        elif letra=="F'":
+            aux = self.white[6:]
+            self.white[6:]=self.red[0::3]
+            self.red[0::3] = reversed(self.yellow[0:3])
+            self.yellow[0:3]=self.orange[2::3]
+            self.orange[2::3] = aux
+            self.green=rot(self.green, -90)
+        elif letra=="B'":
+            aux=self.white[0:3]
+            self.white[0:3]=self.orange[0::3]
+            self.orange[0::3]=self.yellow[6:]
+            self.yellow[6:]=reversed(self.red[2::3])
+            self.red[2::3]=aux
+            self.blue=rot(self.blue, -90)
         else:
             print("ERROR")
 # Esta funcion rota una cara en 90 y -90 grados
@@ -141,5 +169,5 @@ def rot(face, deg=90):
 
 cubo = Cube()
 #cubo.show()
-cubo.move("D'")
+cubo.move("B'")
 cubo.show()
