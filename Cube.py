@@ -65,26 +65,25 @@ class Cube:
         if letra == 'R':
             col = self.green[2::3]  # var temporal para almacenar el valor de la verde
             self.green[2::3] = self.yellow[2::3]
-            self.yellow[2::3] = reversed(self.blue[0::3])
-            self.blue[0::3] = reversed(self.white[2::3])
+            self.yellow[2::3] = reversed(self.blue[::3])
+            self.blue[::3] = reversed(self.white[2::3])
             self.white[2::3] = col
             self.red = rot(self.red)
         elif letra == 'L':
-            col = reversed(self.yellow[0::3])
-            self.yellow[0::3] = self.green[0::3]
-            self.green[0::3] = self.white[0::3]
-            self.white[0::3] = self.blue[2::3]
+            col = reversed(self.yellow[::3])
+            self.yellow[::3] = self.green[::3]
+            self.green[::3] = self.white[::3]
+            self.white[::3] = reversed(self.blue[2::3])
             self.blue[2::3] = col
-            self.orange = rot(self.orange, -90)
+            self.orange = rot(self.orange, 90)
 
         elif letra == 'U':
-            row = self.green[0:3]
-            self.green[0:3] = self.red[0:3]
-            self.red[0:3] = self.blue[0:3]
-            self.blue[0:3] = self.orange[0:3]
-            self.orange[0:3] = row
+            row = self.green[:3]
+            self.green[:3] = self.red[:3]
+            self.red[:3] = self.blue[:3]
+            self.blue[:3] = self.orange[:3]
+            self.orange[:3] = row
             self.white = rot(self.white)
-
         elif letra == 'D':
             row = self.orange[6:]
             self.orange[6:] = self.blue[6:]
@@ -94,24 +93,24 @@ class Cube:
             self.yellow = rot(self.yellow)
         elif letra == "R'":
             col = self.white[2::3]
-            self.white[2::3] = self.blue[0::3]
-            self.blue[0::3] = self.yellow[2::3]
+            self.white[2::3] = reversed(self.blue[::3])
+            self.blue[::3] = reversed(self.yellow[2::3])
             self.yellow[2::3] = self.green[2::3]
             self.green[2::3] = col
             self.red = rot(self.red, -90)
         elif letra == "L'":
             col = self.green[0::3]
-            self.green[0::3] = self.yellow[0::3]
-            self.yellow[0::3] = self.blue[2::3]
-            self.blue[2::3] = self.white[0::3]
-            self.white[0::3] = col
+            self.green[::3] = self.yellow[::3]
+            self.yellow[::3] = reversed(self.blue[2::3])
+            self.blue[2::3] = reversed(self.white[::3])
+            self.white[::3] = col
             self.orange = rot(self.orange, -90)
         elif letra == "U'":
-           row = self.green[0:3]
-           self.green[0:3] = self.orange[0:3]
-           self.orange[0:3] = self.blue[0:3]
-           self.blue[0:3] = self.red[0:3]
-           self.red[0:3] = row
+           row = self.green[:3]
+           self.green[:3] = self.orange[0:3]
+           self.orange[:3] = self.blue[0:3]
+           self.blue[:3] = self.red[0:3]
+           self.red[:3] = row
            self.white = rot(self.white, -90)
         elif letra == "D'":
             row = self.green[6:]
@@ -119,13 +118,13 @@ class Cube:
             self.red[6:] = self.blue[6:]
             self.blue[6:] = self.orange[6:]
             self.orange[6:] = row
-            self.yellow = rot(self.yellow)
+            self.yellow = rot(self.yellow,-90)
         elif letra == 'F':
             aux = self.white[6:]
             self.white[6:] = reversed(self.orange[2::3])
             self.orange[2::3] = self.yellow[:3]
-            self.yellow[0:3] = reversed(self.red[0::3])
-            self.red[0::3] = aux
+            self.yellow[:3] = reversed(self.red[::3])
+            self.red[::3] = aux
             self.green = rot(self.green)
         elif letra == 'B':
             aux = reversed(self.white[:3])
@@ -135,60 +134,74 @@ class Cube:
             self.orange[::3] = aux
             self.blue = rot(self.blue)
         elif letra == "F'":
-            aux = self.white[6:]
-            self.white[6:] = self.red[0::3]
-            self.red[0::3] = reversed(self.yellow[0:3])
-            self.yellow[0:3] = self.orange[2::3]
+            aux = reversed(self.white[6:])
+            self.white[6:] = self.red[::3]
+            self.red[::3] = reversed(self.yellow[:3])
+            self.yellow[:3] = self.orange[2::3]
             self.orange[2::3] = aux
             self.green = rot(self.green, -90)
         elif letra == "B'":
-            aux = self.white[0:3]
-            self.white[0:3] = self.orange[0::3]
-            self.orange[0::3] = self.yellow[6:]
+            aux = self.white[:3]
+            self.white[:3] = reversed(self.orange[::3])
+            self.orange[::3] = self.yellow[6:]
             self.yellow[6:] = reversed(self.red[2::3])
             self.red[2::3] = aux
             self.blue = rot(self.blue, -90)
         elif letra == "U2":
-            self.green[0:3], self.blue[0:3] = self.blue[0:3], self.green[0:3]
-            self.red[0:3], self.orange[0:3] = self.orange[0:3], self.red[0:3]
-            self.white = rot(self.white)  #FIXME: rotar 180 grados, solo eso falta
+            self.green[:3], self.blue[:3] = self.blue[:3], self.green[:3]
+            self.red[:3], self.orange[:3] = self.orange[:3], self.red[:3]
+            self.white = rot(self.white, 180)
         elif letra == "R2":
-            self.green[]
-            pass
+            self.white[2::3], self.yellow[2::3] = self.yellow[2::3], self.white[2::3]
+            self.green[2::3], self.blue[0::3] = reversed(self.blue[0::3]), reversed(self.green[2::3])
+            self.red = rot(self.red, 180)
         elif letra == "L2":
-            pass
+            self.white[::3], self.yellow[::3] = self.yellow[::3], self.white[::3]
+            self.red[::3], self.orange[::3] = reversed(self.orange[::3]), reversed(self.red[::3])
+            self.orange = rot(self.orange, 180)
         elif letra == "D2":
-            pass
+            self.green[6:], self.blue[6:] = self.blue[6:], self.green[6:]
+            self.red[6:], self.orange[6:] = self.orange[6:], self.red[6:]
+            self.yellow = rot(self.yellow, 180)
         elif letra == "F2":
-            pass
+            self.white[6:], self.yellow[:3] = reversed(self.yellow[:3]), reversed(self.white[6:])
+            self.red[::3], self.orange[2::3] = reversed(self.orange[::3]), reversed(self.red[::3])
+            self.green = rot(self.green,180)
         elif letra == "B2":
-            pass
-
+            self.white[:3], self.yellow[6:] = reversed(self.yellow[6:]), reversed(self.white[:3])
+            self.red[2::3], self.orange[::3] = reversed(self.orange[::3]), reversed(self.red[2::3])
+            self.blue = rot(self.blue, 180)
         else:
             print("ERROR")
 
     def mov_sq(self, sequence):
         pasos = sequence.split()
-        for i in pasos:
-            self.mov(i)
+        for p in pasos:
+            self.mov(p)
 
-
-# Esta funcion rota una cara en 90 y -90 grados
 def rot(face, deg=90):
+    """Esta funcion rota las caras en 90, 180, -90"""
     face_aux = []
     if deg == 90:
         for i in range(3):
-            """ Transpone las las columnas, "volteadas" por las filas """
+            # Transpone las las columnas, "volteadas" por las filas
             face_aux.extend(reversed(face[i::3]))
-    else:
+    elif deg==-90:
         for i in range(3):
-            """ Aquí coloco el 2-i par aque se intercambien las columnas en orden inverso al de las filas
-            esto es porque la rotacion en scmr """
+            ''' Aquí coloco el 2-i par aque se intercambien las columnas en orden inverso al de las filas
+            esto es porque la rotacion en scmr '''
             face_aux.extend(face[2 - i::3])
+    elif deg== 180:
+        # Rotacion de 180
+        face_aux.extend(reversed(face))
+    else:
+        # Hmm ... por si acaso
+        face_aux = face
     return face_aux
 
 
 cubo = Cube()
-# cubo.mov_sq("R R'")
-
+cubo.mov_sq("F2")
 cubo.show()
+
+print()
