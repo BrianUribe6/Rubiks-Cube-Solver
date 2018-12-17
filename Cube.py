@@ -158,9 +158,11 @@ class Cube:
         for p in pasos:
             self.mov(p)
 
-    def shuffle(self, secuencia):
+    def shuffle(self):
         """Ejecuta el scramble generado por la funcion y deja el cubo en un estado no resuelto"""
+        secuencia = scramble()
         self.mov_sq(secuencia)
+        return secuencia
 
 
 def scramble():
@@ -207,8 +209,6 @@ def rot(face, deg=90):
     return face_aux
 
 
-sequencia = scramble()
-print(sequencia)
 cubo = Cube()
-cubo.shuffle(sequencia)
+print(cubo.shuffle())
 cubo.show()
