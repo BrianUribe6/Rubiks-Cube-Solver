@@ -1,11 +1,14 @@
+from colorama import Fore, Style
+
+
 class Cube:
     def __init__(self):
-        self.white = ['W' for _ in range(9)]
-        self.yellow = ['Y' for _ in range(9)]
-        self.red = ['R' for _ in range(9)]
-        self.orange = ['O' for _ in range(9)]
-        self.green = ['G' for _ in range(9)]
-        self.blue = ['B' for _ in range(9)]
+        self.white = ['%dW' % w for w in range(9)]
+        self.yellow = [f'{Fore.LIGHTYELLOW_EX}%d%s{Style.RESET_ALL}' % (y, 'Y') for y in range(9)]
+        self.red = [f'{Fore.RED}%d%s{Style.RESET_ALL}' % (r, 'R') for r in range(9)]
+        self.orange = [f'{Fore.YELLOW}%d%s{Style.RESET_ALL}' % (o, 'O') for o in range(9)]
+        self.green = [f'{Fore.GREEN}%d%s{Style.RESET_ALL}' % (g, 'G') for g in range(9)]
+        self.blue = [f'{Fore.BLUE}%d%s{Style.RESET_ALL}' % (b, 'B') for b in range(9)]
 
     def get_nivel(self, nivel=0):
         """Retorna un string que contiene una linea(nivel) con las piezas naranjas, blancas, rojas, amarillas
@@ -13,13 +16,13 @@ class Cube:
         linea = ""
         final = nivel + 3
         for o in range(nivel, final):
-            linea += str(o) + self.orange[o] + '  '
+            linea += self.orange[o] + '  '
         for g in range(nivel, final):
-            linea += str(g) + self.green[g] + '  '
+            linea += self.green[g] + '  '
         for r in range(nivel, final):
-            linea += str(r) + self.red[r] + '  '
+            linea += self.red[r] + '  '
         for b in range(nivel, final):
-            linea += str(b) + self.blue[b] + '  '
+            linea += self.blue[b] + '  '
         return linea
 
     def show(self):
@@ -29,7 +32,7 @@ class Cube:
         # Contador para indicar cuando ir a la siguiente linea
         row_size = 3
         # Mostrando las azules
-        for idx, w in enumerate(self.white):
+        for w in self.white:
             # si la linea finalizo
             if row_size == 0:
                 #  Reiniciar contador y continuar en la siguiente linea
@@ -39,7 +42,7 @@ class Cube:
             if row_size == 3:
                 blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
                 print(blk, end='')
-            print(str(idx) + w, ' ', end='')
+            print(w, ' ', end='')
             row_size -= 1
         print('')
         # Mostrando las naranjas, blancas, rojas y amarillas
@@ -48,7 +51,7 @@ class Cube:
 
         row_size = 3  # Reinicio el contador para evitar problemas al imprimir las verdes
         # Mostrando las verdes
-        for idx, y in enumerate(self.yellow):
+        for y in self.yellow:
             # si la linea finalizo
             if row_size == 0:
                 #  Reiniciar contador y continuar en la siguiente linea
@@ -57,7 +60,7 @@ class Cube:
             if row_size == 3:
                 blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
                 print(blk, end='')
-            print(str(idx) + y, ' ', end='')
+            print(y, ' ', end='')
             row_size -= 1
         print('')
 
@@ -106,12 +109,12 @@ class Cube:
             self.white[::3] = col
             self.orange = rot(self.orange, -90)
         elif letra == "U'":
-           row = self.green[:3]
-           self.green[:3] = self.orange[0:3]
-           self.orange[:3] = self.blue[0:3]
-           self.blue[:3] = self.red[0:3]
-           self.red[:3] = row
-           self.white = rot(self.white, -90)
+            row = self.green[:3]
+            self.green[:3] = self.orange[0:3]
+            self.orange[:3] = self.blue[0:3]
+            self.blue[:3] = self.red[0:3]
+            self.red[:3] = row
+            self.white = rot(self.white, -90)
         elif letra == "D'":
             row = self.green[6:]
             self.green[6:] = self.red[6:]
@@ -179,6 +182,7 @@ class Cube:
         for p in pasos:
             self.mov(p)
 
+
 def rot(face, deg=90):
     """Esta funcion rota las caras en 90, 180, -90"""
     face_aux = []
@@ -186,12 +190,12 @@ def rot(face, deg=90):
         for i in range(3):
             # Transpone las las columnas, "volteadas" por las filas
             face_aux.extend(reversed(face[i::3]))
-    elif deg==-90:
+    elif deg == -90:
         for i in range(3):
             ''' Aquí coloco el 2-i par aque se intercambien las columnas en orden inverso al de las filas
             esto es porque la rotacion en scmr '''
             face_aux.extend(face[2 - i::3])
-    elif deg== 180:
+    elif deg == 180:
         # Rotacion de 180
         face_aux.extend(reversed(face))
     else:
