@@ -73,7 +73,7 @@ class Cube:
 
         elif letra == 'L':
             self.yellow[::3],self.green[::3],self.white[::3],self.blue[2::3] = \
-                self.green[::3],self.white[::3], reversed(self.blue[2::3]),self.green[::3]
+                self.green[::3],self.white[::3], reversed(self.blue[2::3]),reversed(self.yellow[::3])
             self.orange = rot(self.orange, 90)
 
         elif letra == 'U':
@@ -136,7 +136,7 @@ class Cube:
             self.red = rot(self.red, 180)
         elif letra == "L2":
             self.white[::3], self.yellow[::3] = self.yellow[::3], self.white[::3]
-            self.red[::3], self.orange[::3] = reversed(self.orange[::3]), reversed(self.red[::3])
+            self.green[::3], self.blue[2::3] = reversed(self.blue[2::3]), reversed(self.green[::3])
             self.orange = rot(self.orange, 180)
         elif letra == "D2":
             self.green[6:], self.blue[6:] = self.blue[6:], self.green[6:]
@@ -181,5 +181,5 @@ def rot(face, deg=90):
 
 
 cubo = Cube()
-cubo.mov_sq("R")
+cubo.mov_sq("R2 L2 D2 F2 B2")
 cubo.show()
