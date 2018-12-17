@@ -1,5 +1,5 @@
 from colorama import Fore, Style
-
+from random import randint
 
 class Cube:
     def __init__(self):
@@ -182,6 +182,32 @@ class Cube:
         for p in pasos:
             self.mov(p)
 
+    def shuffle(self, secuencia):
+        """Ejecuta el scramble generado por la funcion y deja el cubo en un estado no resuelto"""
+        self.mov_sq(secuencia)
+
+
+def scramble():
+    """Genera un algoritmo de 20 movimientos para barajar el cubo y retorna el mismo como un string
+    separado por espacios. El algoritmo toma en cuenta el movimiento realizado anteriormente y evita repetirlo.
+    Todos los movimientos que contengan la misma designacion son considerados iguales."""
+
+    positions = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2"]
+    scramble_size = 20
+    scramble_algo = ""
+
+    # mantiene registro del ultimo movimiento realizado para evitar repeticiones
+    # inicializado en 0 para tener un caracter con el que comparar el primer movimiento
+    prev_move = '0'
+    for move in range(scramble_size):
+        random_idx = randint(0, len(positions) - 1)
+        while prev_move[0] in positions[random_idx]:  # Si el movimiento es repetido
+            random_idx = randint(0, len(positions) - 1)
+        prev_move = positions[random_idx]  # actulizando movimiento anterior
+        scramble_algo += positions[random_idx] + ' '
+
+    return scramble_algo
+
 
 def rot(face, deg=90):
     """Esta funcion rota las caras en 90, 180, -90"""
@@ -205,7 +231,7 @@ def rot(face, deg=90):
 
 
 cubo = Cube()
-cubo.mov_sq("F2")
+secuencia = scramble()
+print(secuencia)
+cubo.shuffle(secuencia)
 cubo.show()
-
-print()
