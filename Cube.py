@@ -1,3 +1,5 @@
+from colorama import Fore, Style
+
 class Cube:
     def __init__(self):
         self.white = ['W' for _ in range(9)]
@@ -11,17 +13,21 @@ class Cube:
     def get_nivel(self, nivel=0):
         """Retorna un string que contiene una linea(nivel) con las piezas naranjas, blancas, rojas, amarillas
         respectivamente. primer nivel = 0, segundo nivel = 3, tercer nivel = 6 en un cubo 3x3"""
-        linea = ""
+        naranjas = f"{Fore.YELLOW}"
+        blancas = f"{Style.RESET_ALL}"
+        rojas = f"{Fore.RED}"
+        amarillas = f"{Fore.LIGHTYELLOW_EX}"
+        # FIXME: Identificar el color de cada pieza en particular en vez de colorear toda la cara de un respectivo color
         final = nivel + 3
         for o in range(nivel, final):
-            linea += str(o) + self.orange[o] + '  '
+            naranjas += str(o) + self.orange[o] + '  '
         for w in range(nivel, final):
-            linea += str(w) + self.white[w] + '  '
+            blancas += str(w) + self.white[w] + '   '
         for r in range(nivel, final):
-            linea += str(r) + self.red[r] + '  '
+            rojas += str(r) + self.red[r] + '  '
         for y in range(nivel, final):
-            linea += str(y) + self.yellow[y] + '  '
-        return linea
+            amarillas += str(y) + self.yellow[y] + '  '
+        return naranjas + blancas + rojas + amarillas + f"{Style.RESET_ALL}"
 
     def show(self):
         """ Muestra el estado actual de cada una de las caras en 2D, esta funcion es temporal para comprobar
@@ -40,7 +46,7 @@ class Cube:
             if row_size == 3:
                 blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
                 print(blk, end='')
-            print(str(idx) + b, ' ', end='')
+            print(f"{Fore.BLUE}%d%s {Style.RESET_ALL}" % (idx, b), ' ', end='')
             row_size -= 1
         print('')
         # Mostrando las naranjas, blancas, rojas y amarillas
@@ -58,7 +64,7 @@ class Cube:
             if row_size == 3:
                 blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
                 print(blk, end='')
-            print(str(idx) + g, ' ', end='')
+            print(f"{Fore.GREEN}%d%s {Style.RESET_ALL}" % (idx, g), ' ', end='')
             row_size -= 1
         print('')
 
@@ -124,6 +130,8 @@ class Cube:
             self.yellow = rot(self.yellow)
         else:
             print("ERROR")
+
+
 # Esta funcion rota una cara en 90 y -90 grados
 def rot(face, deg=90):
     face_aux = []
