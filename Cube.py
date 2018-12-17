@@ -4,7 +4,6 @@ class Cube:
         self.yellow = ['Y' for _ in range(9)]
         self.red = ['R' for _ in range(9)]
         self.orange = ['O' for _ in range(9)]
-        #self.orange[6::1] = ['C', 'C', 'C']  # ---> para fines de prueba
         self.green = ['G' for _ in range(9)]
         self.blue = ['B' for _ in range(9)]
 
@@ -15,12 +14,12 @@ class Cube:
         final = nivel + 3
         for o in range(nivel, final):
             linea += str(o) + self.orange[o] + '  '
-        for w in range(nivel, final):
-            linea += str(w) + self.white[w] + '  '
+        for g in range(nivel, final):
+            linea += str(g) + self.green[g] + '  '
         for r in range(nivel, final):
             linea += str(r) + self.red[r] + '  '
-        for y in range(nivel, final):
-            linea += str(y) + self.yellow[y] + '  '
+        for b in range(nivel, final):
+            linea += str(b) + self.blue[b] + '  '
         return linea
 
     def show(self):
@@ -30,7 +29,7 @@ class Cube:
         # Contador para indicar cuando ir a la siguiente linea
         row_size = 3
         # Mostrando las azules
-        for idx, b in enumerate(self.blue):
+        for idx, w in enumerate(self.white):
             # si la linea finalizo
             if row_size == 0:
                 #  Reiniciar contador y continuar en la siguiente linea
@@ -40,7 +39,7 @@ class Cube:
             if row_size == 3:
                 blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
                 print(blk, end='')
-            print(str(idx) + b, ' ', end='')
+            print(str(idx) + w, ' ', end='')
             row_size -= 1
         print('')
         # Mostrando las naranjas, blancas, rojas y amarillas
@@ -49,7 +48,7 @@ class Cube:
 
         row_size = 3  # Reinicio el contador para evitar problemas al imprimir las verdes
         # Mostrando las verdes
-        for idx, g in enumerate(self.green):
+        for idx, y in enumerate(self.yellow):
             # si la linea finalizo
             if row_size == 0:
                 #  Reiniciar contador y continuar en la siguiente linea
@@ -58,25 +57,24 @@ class Cube:
             if row_size == 3:
                 blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
                 print(blk, end='')
-            print(str(idx) + g, ' ', end='')
+            print(str(idx) + y, ' ', end='')
             row_size -= 1
         print('')
 
-    def move(self, letra):
+    def mov(self, letra):
         if letra == 'R':
             col = self.green[2::3]  # var temporal para almacenar el valor de la verde
-            self.green[2::3] = self.yellow[0::3]
-            self.yellow[0::3] = self.blue[2::3]
-            self.blue[2::3] = self.white[2::3]
+            self.green[2::3] = self.yellow[2::3]
+            self.yellow[2::3] = reversed(self.blue[0::3])
+            self.blue[0::3] = reversed(self.white[2::3])
             self.white[2::3] = col
             self.red = rot(self.red)
-
         elif letra == 'L':
-            col = self.yellow[2::3]
-            self.yellow[2::3] = self.green[0::3]
+            col = reversed(self.yellow[0::3])
+            self.yellow[0::3] = self.green[0::3]
             self.green[0::3] = self.white[0::3]
-            self.white[0::3] = self.blue[0::3]
-            self.blue[0::3] = col
+            self.white[0::3] = self.blue[2::3]
+            self.blue[2::3] = col
             self.orange = rot(self.orange, -90)
 
         elif letra == 'U':
@@ -96,7 +94,7 @@ class Cube:
             self.yellow = rot(self.yellow)
         elif letra == "R'":
             col = self.white[2::3]
-            self.white[2::3] = self.blue[2::3]
+            self.white[2::3] = self.blue[0::3]
             self.blue[0::3]= self.yellow[2::3]
             self.yellow[2::3] = self.green[2::3]
             self.green[2::3] = col
@@ -125,16 +123,16 @@ class Cube:
         elif letra=='F':
             aux = self.white[6:]
             self.white[6:] = reversed(self.orange[2::3])
-            self.orange[2::3]=self.yellow[0:3]
+            self.orange[2::3]=self.yellow[:3]
             self.yellow[0:3] = reversed(self.red[0::3])
             self.red[0::3] = aux
             self.green = rot(self.green)
         elif letra=='B':
-            aux = reversed(self.white[0:3])
-            self.white[0:3] = self.red[2::3]
+            aux = reversed(self.white[:3])
+            self.white[:3] = self.red[2::3]
             self.red[2::3] = reversed(self.yellow[6:])
-            self.yellow[6:]= self.orange[0::3]
-            self.orange[0::3]=aux
+            self.yellow[6:]= self.orange[::3]
+            self.orange[::3]=aux
             self.blue = rot(self.blue)
         elif letra=="F'":
             aux = self.white[6:]
@@ -152,6 +150,12 @@ class Cube:
             self.blue=rot(self.blue, -90)
         else:
             print("ERROR")
+
+    def mov_sq(self,sequence):
+        pasos = sequence.split()
+        for i in pasos:
+            self.mov(i)
+
 # Esta funcion rota una cara en 90 y -90 grados
 def rot(face, deg=90):
     face_aux = []
@@ -169,5 +173,6 @@ def rot(face, deg=90):
 
 cubo = Cube()
 #cubo.show()
-cubo.move("B'")
+cubo.mov_sq("R R'")
+
 cubo.show()
