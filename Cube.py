@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 
 
+
 class Cube:
     def __init__(self):
         self.white = ['%dW' % w for w in range(9)]
