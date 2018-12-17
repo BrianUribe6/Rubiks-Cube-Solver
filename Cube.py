@@ -51,6 +51,7 @@ class Cube:
             print(self.get_nivel(nivel))
 
         row_size = 3  # Reinicio el contador para evitar problemas al imprimir las verdes
+        # Mostrando las verdes
         for g in self.green:
             # si la linea finalizo
             if row_size == 0:
