@@ -1,33 +1,30 @@
 from colorama import Fore, Style
 
+
 class Cube:
     def __init__(self):
-        self.white = ['W' for _ in range(9)]
-        self.yellow = ['Y' for _ in range(9)]
-        self.red = ['R' for _ in range(9)]
-        self.orange = ['O' for _ in range(9)]
+        self.white = ['%dW' % w for w in range(9)]
+        self.yellow = [f'{Fore.LIGHTYELLOW_EX}%d%s{Style.RESET_ALL}' % (y, 'Y') for y in range(9)]
+        self.red = [f'{Fore.RED}%d%s{Style.RESET_ALL}' % (r, 'R') for r in range(9)]
+        self.orange = [f'{Fore.YELLOW}%d%s{Style.RESET_ALL}' % (o, 'O') for o in range(9)]
         #self.orange[6::1] = ['C', 'C', 'C']  # ---> para fines de prueba
-        self.green = ['G' for _ in range(9)]
-        self.blue = ['B' for _ in range(9)]
+        self.green = [f'{Fore.GREEN}%d%s{Style.RESET_ALL}' % (g, 'G') for g in range(9)]
+        self.blue = [f'{Fore.BLUE}%d%s{Style.RESET_ALL}' % (b, 'B') for b in range(9)]
 
     def get_nivel(self, nivel=0):
         """Retorna un string que contiene una linea(nivel) con las piezas naranjas, blancas, rojas, amarillas
         respectivamente. primer nivel = 0, segundo nivel = 3, tercer nivel = 6 en un cubo 3x3"""
-        naranjas = f"{Fore.YELLOW}"
-        blancas = f"{Style.RESET_ALL}"
-        rojas = f"{Fore.RED}"
-        amarillas = f"{Fore.LIGHTYELLOW_EX}"
-        # FIXME: Identificar el color de cada pieza en particular en vez de colorear toda la cara de un respectivo color
+        linea = ""
         final = nivel + 3
         for o in range(nivel, final):
-            naranjas += str(o) + self.orange[o] + '  '
+            linea += self.orange[o] + '  '
         for w in range(nivel, final):
-            blancas += str(w) + self.white[w] + '   '
+            linea += self.white[w] + '  '
         for r in range(nivel, final):
-            rojas += str(r) + self.red[r] + '  '
+            linea += self.red[r] + '  '
         for y in range(nivel, final):
-            amarillas += str(y) + self.yellow[y] + '  '
-        return naranjas + blancas + rojas + amarillas + f"{Style.RESET_ALL}"
+            linea += self.yellow[y] + '  '
+        return linea
 
     def show(self):
         """ Muestra el estado actual de cada una de las caras en 2D, esta funcion es temporal para comprobar
@@ -36,7 +33,7 @@ class Cube:
         # Contador para indicar cuando ir a la siguiente linea
         row_size = 3
         # Mostrando las azules
-        for idx, b in enumerate(self.blue):
+        for b in self.blue:
             # si la linea finalizo
             if row_size == 0:
                 #  Reiniciar contador y continuar en la siguiente linea
@@ -46,7 +43,7 @@ class Cube:
             if row_size == 3:
                 blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
                 print(blk, end='')
-            print(f"{Fore.BLUE}%d%s {Style.RESET_ALL}" % (idx, b), ' ', end='')
+            print(b, ' ', end='')
             row_size -= 1
         print('')
         # Mostrando las naranjas, blancas, rojas y amarillas
@@ -55,7 +52,7 @@ class Cube:
 
         row_size = 3  # Reinicio el contador para evitar problemas al imprimir las verdes
         # Mostrando las verdes
-        for idx, g in enumerate(self.green):
+        for g in self.green:
             # si la linea finalizo
             if row_size == 0:
                 #  Reiniciar contador y continuar en la siguiente linea
@@ -64,7 +61,7 @@ class Cube:
             if row_size == 3:
                 blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
                 print(blk, end='')
-            print(f"{Fore.GREEN}%d%s {Style.RESET_ALL}" % (idx, g), ' ', end='')
+            print(g, ' ', end='')
             row_size -= 1
         print('')
 
