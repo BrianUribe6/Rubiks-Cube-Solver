@@ -112,37 +112,36 @@ class Cube:
             self.white[0::3]=col
             self.orange = rot(self.orange, -90)
         elif letra == "U'":
-           row = self.green[0:3]
-           self.green[0:3] = self.orange[0:3]
-           self.orange[0:3] = self.blue[0:3]
-           self.blue[0:3] = self.red[0:3]
-           self.red[0:3] = row
-           self.white = rot(self.white, -90)
+            row = self.green[0:3]
+            self.green[0:3] = self.orange[0:3]
+            self.orange[0:3] = self.blue[0:3]
+            self.blue[0:3] = self.red[0:3]
+            self.red[0:3] = row
+            self.white = rot(self.white, -90)
         elif letra == "D'":
             row = self.green[6:]
             self.green[6:] = self.red[6:]
             self.red[6:] = self.blue[6:]
-            self.blue[6:]=self.orange[6:]
+            self.blue[6:]= self.orange[6:]
             self.orange[6:] = row
             self.yellow = rot(self.yellow)
         else:
             print("ERROR")
 
 
-# Esta funcion rota una cara en 90 y -90 grados
 def rot(face, deg=90):
+    """Esta funcion rota una cara en 90 y -90 grados"""
     face_aux = []
     if deg == 90:
         for i in range(3):
-            """ Transpone las las columnas, "volteadas" por las filas """
-            face_aux.extend(reversed(face[i::3]))
+            # Transpone las las columnas, "volteadas" por las filas
+            face_aux.extend(reversed(face[i::3]))  # ALV? como rayos funciona esta wea :O
     else:
         for i in range(3):
-            """ Aquí coloco el 2-i par aque se intercambien las columnas en orden inverso al de las filas
-            esto es porque la rotacion en scmr """
+            '''Aquí coloco el 2-i par aque se intercambien las columnas en orden inverso al de las filas
+            esto es porque la rotacion en scmr '''
             face_aux.extend(face[2 - i::3])
     return face_aux
-
 
 cubo = Cube()
 #cubo.show()
