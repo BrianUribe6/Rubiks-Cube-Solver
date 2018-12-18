@@ -1,5 +1,5 @@
 from colorama import Fore, Style
-
+from random import randint
 
 class Cube:
     def __init__(self):
@@ -144,7 +144,7 @@ class Cube:
             self.yellow = rot(self.yellow, 180)
         elif letra == "F2":
             self.white[6:], self.yellow[:3] = reversed(self.yellow[:3]), reversed(self.white[6:])
-            self.red[::3], self.orange[2::3] = reversed(self.orange[::3]), reversed(self.red[::3])
+            self.red[::3], self.orange[2::3] = reversed(self.orange[2::3]), reversed(self.red[::3])
             self.green = rot(self.green,180)
         elif letra == "B2":
             self.white[:3], self.yellow[6:] = reversed(self.yellow[6:]), reversed(self.white[:3])
@@ -157,6 +157,35 @@ class Cube:
         pasos = sequence.split()
         for p in pasos:
             self.mov(p)
+
+    def shuffle(self):
+        """Ejecuta el scramble generado por la funcion y deja el cubo en un estado no resuelto"""
+        secuencia = scramble()
+        self.mov_sq(secuencia)
+        return secuencia
+
+
+def scramble():
+    """Genera un algoritmo de 20 movimientos para barajar el cubo y retorna el mismo como un string
+    separado por espacios. El algoritmo toma en cuenta el movimiento realizado anteriormente y evita repetirlo.
+    Todos los movimientos que contengan la misma designacion son considerados iguales."""
+
+    positions = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'",
+                 "B2"]
+    scramble_size = 20
+    scramble_algo = ""
+
+    # mantiene registro del ultimo movimiento realizado para evitar repeticiones
+    # inicializado en 0 para tener un caracter con el que comparar el primer movimiento
+    prev_move = '0'
+    for move in range(scramble_size):
+        random_idx = randint(0, len(positions) - 1)
+        while prev_move[0] in positions[random_idx]:  # Si el movimiento es repetido
+            random_idx = randint(0, len(positions) - 1)
+        prev_move = positions[random_idx]  # actulizando movimiento anterior
+        scramble_algo += positions[random_idx] + ' '
+
+    return scramble_algo
 
 
 def rot(face, deg=90):
@@ -179,7 +208,41 @@ def rot(face, deg=90):
         face_aux = face
     return face_aux
 
+# Toda esta wea es de prueba
+def unsplit(lista):
+    cadena =''
+    for i in lista:
+        cadena += i + ' '
+    return  cadena
+
+def sim(c, cc):
+    simi = []
+    cad = c.split()
+    cadd = cc.split()
+    for i in range(len(cad)-1):
+        for j in cad:
+            if cadd[i] == j:
+               simi.append(cadd[i])
+    return simi
+
+def dif(c,cc):
+    cad = c.split()
+    simi = sim(c,cc)
+    dife = cad
+    for i in simi:
+        for j in cad:
+            if i == j:
+                dife.remove(j)
+    return unsplit(dife)
+
+
 
 cubo = Cube()
-cubo.mov_sq("R2 L2 D2 F2 B2")
+cubo.mov_sq("L D2 U B2 F' L2 F2 D2 L' R' F' L R U' L U' L' B F' L") #D2 U' L2 B F' R' B' U2 R2 D'
 cubo.show()
+
+print(dif("R2 U L B' F2 D' U' L2 U2 B", "D2 U' L2 B F' R' B' U2 R2 D'"))
+
+
+
+
