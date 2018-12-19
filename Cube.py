@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 from random import randint
 
+
 class Cube:
     def __init__(self):
         self.white = ['%dW' % w for w in range(9)]
@@ -144,7 +145,7 @@ class Cube:
             self.yellow = rot(self.yellow, 180)
         elif letra == "F2":
             self.white[6:], self.yellow[:3] = reversed(self.yellow[:3]), reversed(self.white[6:])
-            self.red[::3], self.orange[2::3] = reversed(self.orange[::3]), reversed(self.red[::3])
+            self.red[::3], self.orange[2::3] = reversed(self.orange[2::3]), reversed(self.red[::3])
             self.green = rot(self.green,180)
         elif letra == "B2":
             self.white[:3], self.yellow[6:] = reversed(self.yellow[6:]), reversed(self.white[:3])
