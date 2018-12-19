@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 from random import randint
 
+
 class Cube:
     def __init__(self):
         self.white = ['%dW' % w for w in range(9)]
@@ -208,41 +209,7 @@ def rot(face, deg=90):
         face_aux = face
     return face_aux
 
-# Toda esta wea es de prueba
-def unsplit(lista):
-    cadena =''
-    for i in lista:
-        cadena += i + ' '
-    return  cadena
-
-def sim(c, cc):
-    simi = []
-    cad = c.split()
-    cadd = cc.split()
-    for i in range(len(cad)-1):
-        for j in cad:
-            if cadd[i] == j:
-               simi.append(cadd[i])
-    return simi
-
-def dif(c,cc):
-    cad = c.split()
-    simi = sim(c,cc)
-    dife = cad
-    for i in simi:
-        for j in cad:
-            if i == j:
-                dife.remove(j)
-    return unsplit(dife)
-
-
 
 cubo = Cube()
-cubo.mov_sq("L D2 U B2 F' L2 F2 D2 L' R' F' L R U' L U' L' B F' L") #D2 U' L2 B F' R' B' U2 R2 D'
+print(cubo.shuffle())
 cubo.show()
-
-print(dif("R2 U L B' F2 D' U' L2 U2 B", "D2 U' L2 B F' R' B' U2 R2 D'"))
-
-
-
-
