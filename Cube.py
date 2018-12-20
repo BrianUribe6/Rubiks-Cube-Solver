@@ -1,214 +1,110 @@
-from colorama import Fore, Style
-from random import randint
+import cv2
+import numpy as np
 
-class Cube:
-    def __init__(self):
-        self.white = ['%dW' % w for w in range(9)]
-        self.yellow = [f'{Fore.LIGHTYELLOW_EX}%d%s{Style.RESET_ALL}' % (y, 'Y') for y in range(9)]
-        self.red = [f'{Fore.RED}%d%s{Style.RESET_ALL}' % (r, 'R') for r in range(9)]
-        self.orange = [f'{Fore.YELLOW}%d%s{Style.RESET_ALL}' % (o, 'O') for o in range(9)]
-        self.green = [f'{Fore.GREEN}%d%s{Style.RESET_ALL}' % (g, 'G') for g in range(9)]
-        self.blue = [f'{Fore.BLUE}%d%s{Style.RESET_ALL}' % (b, 'B') for b in range(9)]
+imagen = cv2.imread('cube.jpg',cv2.IMREAD_COLOR)
+# Esto es para facilitar las coordenades de las regiones
+resized_image = cv2.resize(imagen, (250, 178))
+hsv = cv2.cvtColor(resized_image, cv2.COLOR_BGR2HSV) # Pasa la imagen escalada al formato HSV
 
-    def get_nivel(self, nivel=0):
-        """Retorna un string que contiene una linea(nivel) con las piezas naranjas, blancas, rojas, amarillas
-        respectivamente. primer nivel = 0, segundo nivel = 3, tercer nivel = 6 en un cubo 3x3"""
-        linea = ""
-        final = nivel + 3
-        for o in range(nivel, final):
-            linea += self.orange[o] + '  '
-        for g in range(nivel, final):
-            linea += self.green[g] + '  '
-        for r in range(nivel, final):
-            linea += self.red[r] + '  '
-        for b in range(nivel, final):
-            linea += self.blue[b] + '  '
-        return linea
-
-    def show(self):
-        """ Muestra el estado actual de cada una de las caras en 2D, esta funcion es temporal para comprobar
-        el funcionamiento de los algoritmos y sera eliminada una vez implementemos una GUI"""
-
-        # Contador para indicar cuando ir a la siguiente linea
-        row_size = 3
-        # Mostrando las azules
-        for w in self.white:
-            # si la linea finalizo
-            if row_size == 0:
-                #  Reiniciar contador y continuar en la siguiente linea
-                row_size = 3
-                print('')
-            #  Posicionar la capa
-            if row_size == 3:
-                blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
-                print(blk, end='')
-            print(w, ' ', end='')
-            row_size -= 1
-        print('')
-        # Mostrando las naranjas, blancas, rojas y amarillas
-        for nivel in range(0, 9, 3):
-            print(self.get_nivel(nivel))
-
-        row_size = 3  # Reinicio el contador para evitar problemas al imprimir las verdes
-        # Mostrando las verdes
-        for y in self.yellow:
-            # si la linea finalizo
-            if row_size == 0:
-                #  Reiniciar contador y continuar en la siguiente linea
-                row_size = 3
-                print('')
-            if row_size == 3:
-                blk = ' ' * row_size * 4  # El 4 es = Index+Caracter + (dos espacios vacios que dejas)
-                print(blk, end='')
-            print(y, ' ', end='')
-            row_size -= 1
-        print('')
-
-    def mov(self, letra):
-        if letra == 'R':
-            # var temporal para almacenar el valor de la verde
-            self.green[2::3],self.yellow[2::3],self.blue[::3],self.white[2::3] = \
-                self.yellow[2::3],reversed(self.blue[::3]),reversed(self.white[2::3]),self.green[2::3]
-            self.red = rot(self.red)
-
-        elif letra == 'L':
-            self.yellow[::3],self.green[::3],self.white[::3],self.blue[2::3] = \
-                self.green[::3],self.white[::3], reversed(self.blue[2::3]),reversed(self.yellow[::3])
-            self.orange = rot(self.orange, 90)
-
-        elif letra == 'U':
-            self.green[:3],self.red[:3],self.blue[:3],self.orange[:3] =  \
-                self.red[:3],self.blue[:3],self.orange[:3],self.green[:3]
-            self.white = rot(self.white)
-
-        elif letra == 'D':
-            self.orange[6:],self.blue[6:],self.red[6:],self.green[6:] = \
-                self.blue[6:],self.red[6:],self.green[6:],self.orange[6:]
-            self.yellow = rot(self.yellow)
-
-        elif letra == "R'":
-            self.white[2::3], self.blue[::3], self.yellow[2::3],self.green[2::3] = \
-                reversed(self.blue[::3]),reversed(self.yellow[2::3]),self.green[2::3],self.white[2::3]
-            self.red = rot(self.red, -90)
-
-        elif letra == "L'":
-            self.green[::3],self.yellow[::3],self.blue[2::3],self.white[::3] = \
-                self.yellow[::3],reversed(self.blue[2::3]),reversed(self.white[::3]),self.green[0::3]
-            self.orange = rot(self.orange, -90)
-
-        elif letra == "U'":
-            self.green[:3],self.orange[:3],self.blue[:3],self.red[:3] =\
-                self.orange[0:3],self.blue[0:3],self.red[0:3],self.green[:3]
-            self.white = rot(self.white, -90)
-
-        elif letra == "D'":
-            self.green[6:],self.red[6:],self.blue[6:],self.orange[6:] = \
-                self.red[6:],self.blue[6:],self.orange[6:],self.green[6:]
-            self.yellow = rot(self.yellow,-90)
-
-        elif letra == 'F':
-            self.white[6:],self.orange[2::3],self.yellow[:3],self.red[::3] = \
-                reversed(self.orange[2::3]),self.yellow[:3],reversed(self.red[::3]),self.white[6:]
-            self.green = rot(self.green)
-
-        elif letra == 'B':
-            self.white[:3],self.red[2::3],self.yellow[6:],self.orange[::3] = \
-                self.red[2::3],reversed(self.yellow[6:]),self.orange[::3],reversed(self.white[:3])
-            self.blue = rot(self.blue)
-
-        elif letra == "F'":
-            self.white[6:],self.red[::3],self.yellow[:3],self.orange[2::3] = \
-                self.red[::3],reversed(self.yellow[:3]),self.orange[2::3],reversed(self.white[6:])
-            self.green = rot(self.green, -90)
-
-        elif letra == "B'":
-            self.white[:3],self.orange[::3], self.yellow[6:],self.red[2::3] = \
-                reversed(self.orange[::3]),self.yellow[6:],reversed(self.red[2::3]),self.white[:3]
-            self.blue = rot(self.blue, -90)
-
-        elif letra == "U2":
-            self.green[:3], self.blue[:3] = self.blue[:3], self.green[:3]
-            self.red[:3], self.orange[:3] = self.orange[:3], self.red[:3]
-            self.white = rot(self.white, 180)
-        elif letra == "R2":
-            self.white[2::3], self.yellow[2::3] = self.yellow[2::3], self.white[2::3]
-            self.green[2::3], self.blue[0::3] = reversed(self.blue[0::3]), reversed(self.green[2::3])
-            self.red = rot(self.red, 180)
-        elif letra == "L2":
-            self.white[::3], self.yellow[::3] = self.yellow[::3], self.white[::3]
-            self.green[::3], self.blue[2::3] = reversed(self.blue[2::3]), reversed(self.green[::3])
-            self.orange = rot(self.orange, 180)
-        elif letra == "D2":
-            self.green[6:], self.blue[6:] = self.blue[6:], self.green[6:]
-            self.red[6:], self.orange[6:] = self.orange[6:], self.red[6:]
-            self.yellow = rot(self.yellow, 180)
-        elif letra == "F2":
-            self.white[6:], self.yellow[:3] = reversed(self.yellow[:3]), reversed(self.white[6:])
-            self.red[::3], self.orange[2::3] = reversed(self.orange[::3]), reversed(self.red[::3])
-            self.green = rot(self.green,180)
-        elif letra == "B2":
-            self.white[:3], self.yellow[6:] = reversed(self.yellow[6:]), reversed(self.white[:3])
-            self.red[2::3], self.orange[::3] = reversed(self.orange[::3]), reversed(self.red[2::3])
-            self.blue = rot(self.blue, 180)
-        else:
-            print("ERROR")
-
-    def mov_sq(self, sequence):
-        pasos = sequence.split()
-        for p in pasos:
-            self.mov(p)
-
-    def shuffle(self):
-        """Ejecuta el scramble generado por la funcion y deja el cubo en un estado no resuelto"""
-        secuencia = scramble()
-        self.mov_sq(secuencia)
-        return secuencia
+# Dibujando las regiones
+# img = cv2.rectangle(resized_image,(25,15),(50,40),(126,255,11),2)
+# img = cv2.rectangle(resized_image,(110,15),(135,40),(126,255,11),2)
+# img = cv2.rectangle(resized_image,(195,15),(220,40),(126,255,11),2)
+#
+# img = cv2.rectangle(resized_image,(25,75),(50,100),(126,255,11),2)
+# img = cv2.rectangle(resized_image,(110,75),(135,100),(126,255,11),2)
+# img = cv2.rectangle(resized_image,(195,75),(220,100),(126,255,11),2)
+#
+# img = cv2.rectangle(resized_image,(25,135),(50,160),(126,255,11),2)
+# img = cv2.rectangle(resized_image,(110,135),(135,160),(126,255,11),2)
+# img = cv2.rectangle(resized_image,(195,135),(220,160),(126,255,11),2)
 
 
-def scramble():
-    """Genera un algoritmo de 20 movimientos para barajar el cubo y retorna el mismo como un string
-    separado por espacios. El algoritmo toma en cuenta el movimiento realizado anteriormente y evita repetirlo.
-    Todos los movimientos que contengan la misma designacion son considerados iguales."""
+# Rango de colores detectados:
+# Verdes:
+verde_bajos = np.array([49, 50, 50], dtype=np.uint8) # np.unit8 es para un rango de colores de 8bits (0-255)
+verde_altos = np.array([90, 255, 255], dtype=np.uint8)
+# Azules:
+azul_bajos = np.array([100, 65, 75], dtype=np.uint8)
+azul_altos = np.array([130, 255, 255], dtype=np.uint8)
+# Rojos:
+rojo_bajos1 = np.array([0, 75, 75], dtype=np.uint8)
+rojo_altos1 = np.array([5, 255, 255], dtype=np.uint8)
+rojo_bajos2 = np.array([160,50,50], dtype=np.uint8)
+rojo_altos2 = np.array([180,255,255], dtype=np.uint8)
+# Amarillos
+amarillos_altos = np.array([42, 255, 255], dtype=np.uint8)
+amarillos_bajos = np.array([19, 191, 125], dtype=np.uint8)
+#Blancos
+blancos_altos = np.array([255, 50, 255], dtype=np.uint8)
+blancos_bajos = np.array([0, 0, 178], dtype=np.uint8)
+# Naranjas
+naranjas_altos = np.array([15, 255 , 255], dtype=np.uint8)
+naranjas_bajos = np.array([5, 100 , 200], dtype=np.uint8)
 
-    positions = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'",
-                 "B2"]
-    scramble_size = 20
-    scramble_algo = ""
+# Crear las mascaras
+mascara_azul = cv2.inRange(hsv, azul_bajos, azul_altos)  # Crea las mascaras uniendo los rangos bajos y altos
+mascara_verde = cv2.inRange(hsv, verde_bajos, verde_altos)
+mascara_rojo1 = cv2.inRange(hsv, rojo_bajos1, rojo_altos1)
+mascara_rojo2 = cv2.inRange(hsv, rojo_bajos2, rojo_altos2)
+mascara_blanca = cv2.inRange(hsv,blancos_bajos,blancos_altos)
+mascara_amarilla = cv2.inRange(hsv,amarillos_bajos,amarillos_altos)
+mascara_naranja = cv2.inRange(hsv,naranjas_bajos,naranjas_altos)
+# Juntar los rojos
+''' Esto es porque el rojo se divide en dos rangos, los de la izquierda de la escala (cercanos al amarillo) y los de la
+derecha (cercanos al azul)'''
+mascara_rojo = cv2.add(mascara_rojo1, mascara_rojo2)
 
-    # mantiene registro del ultimo movimiento realizado para evitar repeticiones
-    # inicializado en 0 para tener un caracter con el que comparar el primer movimiento
-    prev_move = '0'
-    for move in range(scramble_size):
-        random_idx = randint(0, len(positions) - 1)
-        while prev_move[0] in positions[random_idx]:  # Si el movimiento es repetido
-            random_idx = randint(0, len(positions) - 1)
-        prev_move = positions[random_idx]  # actulizando movimiento anterior
-        scramble_algo += positions[random_idx] + ' '
+# Array con todas las mascaras
+mascaras= [mascara_blanca, mascara_naranja, mascara_verde, mascara_rojo, mascara_azul,mascara_amarilla]
 
-    return scramble_algo
+def regiones(mascara):
+    """Esta función toma las regiones(trozos de la imagen) y las convierte en un array"""
+    mapa = [mascara[15:40,25:50], mascara[15:40,110:135], mascara[15:40,195:220],
+            mascara[75:100,25:50], mascara[75:100,110:135], mascara[75:100,195:220],
+            mascara[135:160,25:50], mascara[135:160,110:135], mascara[135:160,195:220]]
+    return  mapa
 
-
-def rot(face, deg=90):
-    """Esta funcion rota las caras en 90, 180, -90"""
-    face_aux = []
-    if deg == 90:
-        for i in range(3):
-            # Transpone las las columnas, "volteadas" por las filas
-            face_aux.extend(reversed(face[i::3]))
-    elif deg == -90:
-        for i in range(3):
-            ''' Aquí coloco el 2-i par aque se intercambien las columnas en orden inverso al de las filas
-            esto es porque la rotacion en scmr '''
-            face_aux.extend(face[2 - i::3])
-    elif deg == 180:
-        # Rotacion de 180
-        face_aux.extend(reversed(face))
+def iscolor(region,size = 25, accuracy = 0.7):
+    """ Esta función toma una region de la imagen y compara los pixeles individualmente y luego retorna true o false si
+    si los pixeles superan la precision establecida"""
+    n = 0
+    for w in range(size):
+        for h in range(size):
+            if np.all(region[w,h] == [255, 255, 255]):
+                n += 1
+    if n >= size * size * accuracy:
+        return True
     else:
-        # Hmm ... por si acaso
-        face_aux = face
-    return face_aux
+        return False
 
+def masktoarr(mascaras):
+    """Toma las regiones, de todas las mascaras, y las pasa por la funcion iscolor para crea un array con los colores"""
+    arr = []
+    color = ['W','O','G','R','B','Y'] # Para evitar poner 6 if
+    for i in range(9):
+        for j in range(6):
+            reg = regiones(mascaras[j])
+            if iscolor(reg[i]):
+                arr.append(color[j])
+    return arr
 
-cubo = Cube()
-print(cubo.shuffle())
-cubo.show()
+# Mostrar las mascara y la imagen original
+cv2.imshow('Mask_White',mascara_blanca)
+cv2.imshow('Mask_Blue',mascara_azul)
+cv2.imshow('Mask_Green',mascara_verde)
+cv2.imshow('Mask_Yellow',mascara_amarilla)
+cv2.imshow('Mask_Orange',mascara_naranja)
+cv2.imshow('Mask_Red',mascara_rojo)
+cv2.imshow('Original',resized_image)
+
+print(masktoarr(mascaras))
+
+# Salir con ESC para los "visores" de imagen
+while (1):
+    tecla = cv2.waitKey(5) & 0xFF
+    if tecla == 27:
+        break
+
+cv2.destroyAllWindows()
+
