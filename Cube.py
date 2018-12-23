@@ -175,18 +175,9 @@ class Cube:
         """
 
         kociemba_sequence = ''
-        for u in self.white:
-            kociemba_sequence += u[1]
-        for r in self.red:
-            kociemba_sequence += r[1]
-        for f in self.green:
-            kociemba_sequence += f[1]
-        for d in self.yellow:
-            kociemba_sequence += d[1]
-        for l in self.orange:
-            kociemba_sequence += l[1]
-        for b in self.blue:
-            kociemba_sequence += b[1]
+        cube_pattern = self.white + self.red + self.green + self.yellow + self.orange + self.blue
+        for j in cube_pattern:
+            kociemba_sequence += j[1]
 
         solution = kociemba.solve(kociemba_sequence)
         self.mov_sq(solution)
