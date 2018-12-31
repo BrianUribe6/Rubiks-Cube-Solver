@@ -6,14 +6,16 @@ from kivy.lang.builder import Builder
 from kivy.clock import Clock
 from kivy.properties import NumericProperty, StringProperty
 from kivy.uix.camera import Camera
-from datetime import timedelta
+from kivy.uix.actionbar import ActionBar
 import Cube
+import datetime
 
 
 class CubeSolver(BoxLayout):
 
     scramble = StringProperty(Cube.scramble())
     time = NumericProperty(0)
+    time_str = "00:00.00"
     running = False
 
     def __init__(self, **kwargs):
@@ -21,7 +23,8 @@ class CubeSolver(BoxLayout):
 
     def tick(self, dt):
         """Gets Delta time from the CLock object and adds it to the time"""
-        self.time = round(self.time + dt, 2)
+        self.time_str = 'Algo' # str(datetime.timedelta(seconds=315))
+        self.time+= dt
 
     def start(self):
         if not self.running:
@@ -41,26 +44,6 @@ class CubeSolver(BoxLayout):
 
     def set_scramble(self, *args):
         self.scramble = Cube.scramble()
-
-    @staticmethod
-    def time_format(time):
-        """Converts and integer or floating-point number into standardized time format 00:00:00"""
-        minute = 60
-        hour = 3600
-        day = hour * 24
-        if time == 0:
-            return "00.00"
-        # Time is in minutes
-        elif hour > time >= minute:
-            return str(timedelta(seconds=time))[3:10]
-        # Time is in hours
-        elif day > time >= hour:
-            return str(timedelta(seconds=time))[:10]
-        # Time is in days
-        elif time >= day:
-            return str(timedelta(seconds=time))
-        # Time is in seconds
-        return str(timedelta(seconds=time))[5:10]
 
 
 class Tab(BoxLayout, AndroidTabsBase):
