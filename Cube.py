@@ -1,15 +1,16 @@
-from colorama import Fore, Style
 from random import randint
+import kociemba
+
 
 
 class Cube:
     def __init__(self):
-        self.white = ['%dW' % w for w in range(9)]
-        self.yellow = [f'{Fore.LIGHTYELLOW_EX}%d%s{Style.RESET_ALL}' % (y, 'Y') for y in range(9)]
-        self.red = [f'{Fore.RED}%d%s{Style.RESET_ALL}' % (r, 'R') for r in range(9)]
-        self.orange = [f'{Fore.YELLOW}%d%s{Style.RESET_ALL}' % (o, 'O') for o in range(9)]
-        self.green = [f'{Fore.GREEN}%d%s{Style.RESET_ALL}' % (g, 'G') for g in range(9)]
-        self.blue = [f'{Fore.BLUE}%d%s{Style.RESET_ALL}' % (b, 'B') for b in range(9)]
+        self.white = ['%dU' % (w + 1) for w in range(9)]
+        self.red = ['%d%s' % (r + 1, 'R') for r in range(9)]
+        self.green = ['%d%s' % (g + 1, 'F') for g in range(9)]
+        self.yellow = ['%d%s' % (y + 1, 'D') for y in range(9)]
+        self.orange = ['%d%s' % (o + 1, 'L') for o in range(9)]
+        self.blue = ['%d%s' % (b + 1, 'B') for b in range(9)]
 
     def get_nivel(self, nivel=0):
         """Retorna un string que contiene una linea(nivel) con las piezas naranjas, blancas, rojas, amarillas
@@ -68,63 +69,63 @@ class Cube:
     def mov(self, letra):
         if letra == 'R':
             # var temporal para almacenar el valor de la verde
-            self.green[2::3],self.yellow[2::3],self.blue[::3],self.white[2::3] = \
-                self.yellow[2::3],reversed(self.blue[::3]),reversed(self.white[2::3]),self.green[2::3]
+            self.green[2::3], self.yellow[2::3], self.blue[::3], self.white[2::3] = \
+                self.yellow[2::3], reversed(self.blue[::3]), reversed(self.white[2::3]), self.green[2::3]
             self.red = rot(self.red)
 
         elif letra == 'L':
-            self.yellow[::3],self.green[::3],self.white[::3],self.blue[2::3] = \
-                self.green[::3],self.white[::3], reversed(self.blue[2::3]),reversed(self.yellow[::3])
+            self.yellow[::3], self.green[::3], self.white[::3], self.blue[2::3] = \
+                self.green[::3], self.white[::3], reversed(self.blue[2::3]), reversed(self.yellow[::3])
             self.orange = rot(self.orange, 90)
 
         elif letra == 'U':
-            self.green[:3],self.red[:3],self.blue[:3],self.orange[:3] =  \
-                self.red[:3],self.blue[:3],self.orange[:3],self.green[:3]
+            self.green[:3], self.red[:3], self.blue[:3], self.orange[:3] = \
+                self.red[:3], self.blue[:3], self.orange[:3], self.green[:3]
             self.white = rot(self.white)
 
         elif letra == 'D':
-            self.orange[6:],self.blue[6:],self.red[6:],self.green[6:] = \
-                self.blue[6:],self.red[6:],self.green[6:],self.orange[6:]
+            self.orange[6:], self.blue[6:], self.red[6:], self.green[6:] = \
+                self.blue[6:], self.red[6:], self.green[6:], self.orange[6:]
             self.yellow = rot(self.yellow)
 
         elif letra == "R'":
-            self.white[2::3], self.blue[::3], self.yellow[2::3],self.green[2::3] = \
-                reversed(self.blue[::3]),reversed(self.yellow[2::3]),self.green[2::3],self.white[2::3]
+            self.white[2::3], self.blue[::3], self.yellow[2::3], self.green[2::3] = \
+                reversed(self.blue[::3]), reversed(self.yellow[2::3]), self.green[2::3], self.white[2::3]
             self.red = rot(self.red, -90)
 
         elif letra == "L'":
-            self.green[::3],self.yellow[::3],self.blue[2::3],self.white[::3] = \
-                self.yellow[::3],reversed(self.blue[2::3]),reversed(self.white[::3]),self.green[0::3]
+            self.green[::3], self.yellow[::3], self.blue[2::3], self.white[::3] = \
+                self.yellow[::3], reversed(self.blue[2::3]), reversed(self.white[::3]), self.green[0::3]
             self.orange = rot(self.orange, -90)
 
         elif letra == "U'":
-            self.green[:3],self.orange[:3],self.blue[:3],self.red[:3] =\
-                self.orange[0:3],self.blue[0:3],self.red[0:3],self.green[:3]
+            self.green[:3], self.orange[:3], self.blue[:3], self.red[:3] = \
+                self.orange[0:3], self.blue[0:3], self.red[0:3], self.green[:3]
             self.white = rot(self.white, -90)
 
         elif letra == "D'":
-            self.green[6:],self.red[6:],self.blue[6:],self.orange[6:] = \
-                self.red[6:],self.blue[6:],self.orange[6:],self.green[6:]
-            self.yellow = rot(self.yellow,-90)
+            self.green[6:], self.red[6:], self.blue[6:], self.orange[6:] = \
+                self.red[6:], self.blue[6:], self.orange[6:], self.green[6:]
+            self.yellow = rot(self.yellow, -90)
 
         elif letra == 'F':
-            self.white[6:],self.orange[2::3],self.yellow[:3],self.red[::3] = \
-                reversed(self.orange[2::3]),self.yellow[:3],reversed(self.red[::3]),self.white[6:]
+            self.white[6:], self.orange[2::3], self.yellow[:3], self.red[::3] = \
+                reversed(self.orange[2::3]), self.yellow[:3], reversed(self.red[::3]), self.white[6:]
             self.green = rot(self.green)
 
         elif letra == 'B':
-            self.white[:3],self.red[2::3],self.yellow[6:],self.orange[::3] = \
-                self.red[2::3],reversed(self.yellow[6:]),self.orange[::3],reversed(self.white[:3])
+            self.white[:3], self.red[2::3], self.yellow[6:], self.orange[::3] = \
+                self.red[2::3], reversed(self.yellow[6:]), self.orange[::3], reversed(self.white[:3])
             self.blue = rot(self.blue)
 
         elif letra == "F'":
-            self.white[6:],self.red[::3],self.yellow[:3],self.orange[2::3] = \
-                self.red[::3],reversed(self.yellow[:3]),self.orange[2::3],reversed(self.white[6:])
+            self.white[6:], self.red[::3], self.yellow[:3], self.orange[2::3] = \
+                self.red[::3], reversed(self.yellow[:3]), self.orange[2::3], reversed(self.white[6:])
             self.green = rot(self.green, -90)
 
         elif letra == "B'":
-            self.white[:3],self.orange[::3], self.yellow[6:],self.red[2::3] = \
-                reversed(self.orange[::3]),self.yellow[6:],reversed(self.red[2::3]),self.white[:3]
+            self.white[:3], self.orange[::3], self.yellow[6:], self.red[2::3] = \
+                reversed(self.orange[::3]), self.yellow[6:], reversed(self.red[2::3]), self.white[:3]
             self.blue = rot(self.blue, -90)
 
         elif letra == "U2":
@@ -145,8 +146,8 @@ class Cube:
             self.yellow = rot(self.yellow, 180)
         elif letra == "F2":
             self.white[6:], self.yellow[:3] = reversed(self.yellow[:3]), reversed(self.white[6:])
-            self.red[::3], self.orange[2::3] = reversed(self.orange[::3]), reversed(self.red[::3])
-            self.green = rot(self.green,180)
+            self.red[::3], self.orange[2::3] = reversed(self.orange[2::3]), reversed(self.red[::3])
+            self.green = rot(self.green, 180)
         elif letra == "B2":
             self.white[:3], self.yellow[6:] = reversed(self.yellow[6:]), reversed(self.white[:3])
             self.red[2::3], self.orange[::3] = reversed(self.orange[::3]), reversed(self.red[2::3])
@@ -164,6 +165,24 @@ class Cube:
         secuencia = scramble()
         self.mov_sq(secuencia)
         return secuencia
+
+    def solve(self):
+        """
+        Enumera los elementos de cada cara en el orden: blanco rojo, verde, amarillo, naranja y azul respectivamente
+        y retorna un string con dichos elementos. un cubo resuelto produciria el siguiente string:
+        UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB
+        Una vez obtenido el patron del cubo se utiliza el algoritmo de kociemba para obtener la solucion y se ejecuta
+        el mismo.
+        """
+
+        kociemba_sequence = ''
+        cube_pattern = self.white + self.red + self.green + self.yellow + self.orange + self.blue
+        for j in cube_pattern:
+            kociemba_sequence += j[1]
+
+        solution = kociemba.solve(kociemba_sequence)
+        self.mov_sq(solution)
+        return solution
 
 
 def scramble():
@@ -211,5 +230,12 @@ def rot(face, deg=90):
 
 
 cubo = Cube()
-print(cubo.shuffle())
+scramble_alg = cubo.shuffle()
+print("Scramble:", scramble_alg)
+print('')
+cubo.show()
+print('')
+solution = cubo.solve()
+print("Solucion:", solution)
+print('')
 cubo.show()

@@ -7,10 +7,11 @@ from kivy.clock import Clock
 from kivy.properties import NumericProperty
 from kivy.uix.camera import Camera
 from kivy.uix.actionbar import ActionBar
+import Cube
 
 kvcube = '''
 #:import get_color_from_hex kivy.utils.get_color_from_hex
-BoxLayout:
+CubeSolver:
     orientation: 'vertical'
     ActionBar:
         pos_hint: {'top':1}
@@ -33,13 +34,16 @@ BoxLayout:
             text: "TIMER"
             orientation: 'vertical'
             Label:
-                text: '00:00.00'#str(root.number)[:5]
+                text: root.scramble
+                font_size: 25
+            Label:
+                text: str(root.number)[:5] #'00:00.00'
                 font_size: 50
             Button:
-                # background_color: 0,0,0,0
+                background_color: 0,0,0,0
                 size: self.size
                 pos: self.pos
-                # on_release: root.start()
+                on_release: root.start()
         Tab:
             text: "SOLVER"
             # Label:
@@ -74,28 +78,29 @@ BoxLayout:
     '''
 
 
-# class MyTabs(AndroidTabs):
-#     """Contiene las pestañas y se encargada de toda la actividad dentro de las mismas"""
-#     number = NumericProperty(0)
-#     running = False
-#
-#     def __init__(self, **kwargs):
-#         super(MyTabs, self).__init__(**kwargs)
-#
-#     def tick(self, dt):
-#         self.number += dt
-#
-#     def start(self):
-#         if not self.running:
-#             self.running = True
-#             self.number = 0
-#             Clock.schedule_interval(self.tick, 0.01)
-#         else:
-#             self.running = False
-#             self.stop()
-#
-#     def stop(self):
-#         Clock.unschedule(self.tick)
+class CubeSolver(BoxLayout):
+
+    scramble = Cube.scramble()
+    number = NumericProperty(0)
+    running = False
+
+    def __init__(self, **kwargs):
+        super(CubeSolver, self).__init__(**kwargs)
+
+    def tick(self, dt):
+        self.number += dt
+
+    def start(self):
+        if not self.running:
+            self.running = True
+            self.number = 0
+            Clock.schedule_interval(self.tick, 0.01)
+        else:
+            self.running = False
+            self.stop()
+
+    def stop(self):
+        Clock.unschedule(self.tick)
 
 
 class Tab(BoxLayout, AndroidTabsBase):
@@ -105,8 +110,7 @@ class Tab(BoxLayout, AndroidTabsBase):
 
 class CubeSolverApp(App):
     def build(self):
-        cube_solver= Builder.load_string(kvcube)
-
+        cube_solver = Builder.load_string(kvcube)
         return cube_solver
 
 
