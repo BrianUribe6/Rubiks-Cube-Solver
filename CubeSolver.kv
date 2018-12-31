@@ -1,0 +1,64 @@
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+CubeSolver: # BoxLayout
+    orientation: 'vertical'
+    ActionBar:
+        pos_hint: {'top':1}
+        background_image: '/resources/images/background.png'
+        background_color: get_color_from_hex('#E87200')
+        ActionView:
+            use_separator: True
+            ActionPrevious:
+                title: 'Action Bar'
+                with_previous: False
+            ActionOverflow:
+                # overflow_image: '/resources/images/menu.png'
+                # overflow_color: 0,0,0,1
+                ActionButton:
+                    text: "Help"
+                ActionButton:
+                    text: "About"
+    AndroidTabs:
+        Tab:
+            text: "TIMER"
+            orientation: 'vertical'
+            Label:
+                text: root.scramble
+                font_size: 25
+            Label:
+                text: str(root.time)[:5] #'00:00.00'
+                font_size: 50
+            Button:
+                background_color: 0,0,0,0
+                size: self.size
+                pos: self.pos
+                on_release: root.start()
+        Tab:
+            text: "SOLVER"
+            # Label:
+            #     text: "Hello2"
+
+<AndroidTabsBar>:
+    canvas.before:
+        Color:
+            rgba: get_color_from_hex('#E87200')
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        Color:
+            rgba: 0.86,0.86,0.86,1
+        Rectangle:
+            pos: self.pos[0], self.pos[1]
+            size: self.size[0], 1
+        Rectangle:
+            pos: self.pos[0], self.pos[1]
+            size: self.size[0], 1
+        Rectangle:
+            pos: self.pos[0], self.pos[1]
+            size: self.size[0], 1
+<Tab>:
+    canvas:
+        Color:
+            rgba: 0.86,0.86,0.86,1
+        Rectangle:
+            size: self.size
+            pos: self.pos

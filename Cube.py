@@ -229,13 +229,14 @@ def rot(face, deg=90):
     return face_aux
 
 
-cubo = Cube()
-scramble_alg = cubo.shuffle()
-print("Scramble:", scramble_alg)
-print('')
-cubo.show()
-print('')
-solution = cubo.solve()
-print("Solucion:", solution)
-print('')
-cubo.show()
+if __name__ =='__main__':
+    cubo = Cube()
+    scramble_alg = cubo.shuffle()
+    print("Scramble:", scramble_alg)
+    print('')
+    cubo.show()
+    print('')
+    solution = cubo.solve()
+    print("Solucion:", solution)
+    print('')
+    cubo.show()
