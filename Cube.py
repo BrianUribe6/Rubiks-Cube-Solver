@@ -190,22 +190,31 @@ def scramble():
     separado por espacios. El algoritmo toma en cuenta el movimiento realizado anteriormente y evita repetirlo.
     Todos los movimientos que contengan la misma designacion son considerados iguales."""
 
-    positions = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'",
+    cube_moves = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'",
                  "B2"]
     scramble_size = 20
-    scramble_algo = ""
+    scramble_algorithm = ""
+    prev_moves = set()
+    # Generar indice aleatorio
+    index = randint(0, len(cube_moves) - 1)
+    move = cube_moves[index]
+    for i in range(scramble_size):
 
-    # mantiene registro del ultimo movimiento realizado para evitar repeticiones
-    # inicializado en 0 para tener un caracter con el que comparar el primer movimiento
-    prev_move = '0'
-    for move in range(scramble_size):
-        random_idx = randint(0, len(positions) - 1)
-        while prev_move[0] in positions[random_idx]:  # Si el movimiento es repetido
-            random_idx = randint(0, len(positions) - 1)
-        prev_move = positions[random_idx]  # actulizando movimiento anterior
-        scramble_algo += positions[random_idx] + ' '
+        # agregar movimiento a los movientos previos
+        prev_moves.add(move[0])
+        # agregar movimiento al scramble
+        scramble_algorithm += move + ' '
 
-    return scramble_algo
+        # verifica el movimiento nuevo no esté contenido en los previos
+        while move[0] in prev_moves:
+            index = randint(0, len(cube_moves) - 1)
+            move = cube_moves[index]
+
+        # limpia los movimientos previos, el 3 es la cantidad de movimientos repetidos
+        if len(prev_moves) == 3:
+            prev_moves.clear()
+
+    return scramble_algorithm
 
 
 def rot(face, deg=90):
@@ -237,6 +246,7 @@ if __name__ =='__main__':
     cubo.show()
     print('')
     solution = cubo.solve()
+    print(len(solution.split()))
     print("Solucion:", solution)
     print('')
     cubo.show()
