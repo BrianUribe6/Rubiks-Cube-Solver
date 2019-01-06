@@ -1,53 +1,135 @@
-#:import get_color_from_hex kivy.utils.get_color_from_hex
 #:import timedelta datetime.timedelta
+#from kivy.core.window import Window
 
 CubeSolver: # BoxLayout
     orientation: 'vertical'
+#    on_touch_down: root.start()
+    canvas:
+        Color:
+            rgba: 0.95,0.95,0.95,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
     ActionBar:
         pos_hint: {'top':1}
-        background_image: '/resources/images/background.png'
-        background_color: get_color_from_hex('#E87200')
+        background_image: 'atlas://resources/images/elements/background_white'
+        background_color: .91, .45, 0 , 1
         ActionView:
             use_separator: True
             ActionPrevious:
                 title: 'Action Bar'
                 with_previous: False
             ActionOverflow:
-                # overflow_image: '/resources/images/menu.png'
+                overflow_image: 'atlas://resources/images/elements/menu'
+#                allow_stretch: False
                 # overflow_color: 0,0,0,1
+                ActionButton:
+                    text: "Clear Times"
+                    on_press: root.database.clear()
                 ActionButton:
                     text: "Help"
                 ActionButton:
                     text: "About"
     AndroidTabs:
         Tab:
+            on_touch_up: root.start()
+            on_touch_down: root.stop()
             text: "TIMER"
             orientation: 'vertical'
+#            canvas:
+#                Color:
+#                    rgba: .91, .45, 0 , .4
+#                Line:
+#                    # la pos_y fue tanteada, la pos_x es igual al size_hint - 1 (100%) del tabbed panel
+#                    points: [self.width * 0.03, self.height * 0.63 , self.width * 0.97, self.height * 0.63]
+#                    width: 1.25
+
+#            Label:
+#                text:'Timer'
+#                id: timer_lbl
+#                font_size: 20
+#                color: .25, .25, .25, 1
+#                text_size: self.size
+#                halign: 'left'
+#                padding_x: self.width * 0.03
+
+            BoxLayout:
+                padding: [self.width * .025 , 0]
+                Face:
+                Face:
+                Face:
+                Face:
+                Face:
+                Face:
+
             Label:
                 text: root.scramble
-                font_size: 25
+                font_size: 18
+                color: .25, .25, .25, 1
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+
             Label:
                 text: root.time_format(root.time)
-                font_size: 50
-            Button:
-                background_color: 0,0,0,0
+                font_size: 75
+                color: .25, .25, .25, 1
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+#                padding_y: 50
+
+            Image:
+                size_hint: .8, .8
                 size: self.size
-                pos: self.pos
-                on_release: root.start()
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                source: root.timer_button
+
         Tab:
             text: "SOLVER"
             # Label:
             #     text: "Hello2"
+#    Button:
+#        background_color: 1,1,0,1
+#        size: self.size
+#        center_x: self.center_x
+#        center_y: root.center_y
+#        on_release: root.start()
+
+    UserStats:
+        size_hint: .97, .97
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        background_image: 'resources/images/elements/background_white'
+        background_color: 0.95,0.95,0.95,1
+        do_default_tab: False
+
+
+        TabbedPanelItem:
+#            background_image: 'resources/images/elements/background_white'
+            background_image: 'atlas://resources/images/elements/tabs'
+            text: 'Historial'
+            BoxLayout:
+                Button:
+                    text: "Brujeria"
+
+        TabbedPanelItem:
+            text: 'Estadisticas'
+            BoxLayout:
+                Label:
+                    text: 'Second tab content area'
+                Button:
+                    text: 'Button that does nothing'
+
 
 <AndroidTabsBar>:
     canvas.before:
         Color:
-            rgba: get_color_from_hex('#E87200')
+            rgba: .91, .45, 0 , 1
         Rectangle:
             size: self.size
             pos: self.pos
         Color:
-            rgba: 0.86,0.86,0.86,1
+            rgba: 0.95,0.95,0.95,1
         Rectangle:
             pos: self.pos[0], self.pos[1]
             size: self.size[0], 1
@@ -60,7 +142,7 @@ CubeSolver: # BoxLayout
 <Tab>:
     canvas:
         Color:
-            rgba: 0.86,0.86,0.86,1
+            rgba: 0.95,0.95,0.95,1
         Rectangle:
             size: self.size
             pos: self.pos

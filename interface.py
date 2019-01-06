@@ -1,19 +1,37 @@
 from kivy.app import App
 from kivy.garden.androidtabs import *
 from kivy.uix.boxlayout import BoxLayout
-# from kivy.uix.widget import Widget
 from kivy.lang.builder import Builder
+from kivy.uix.label import Label
 from kivy.clock import Clock
-from kivy.properties import NumericProperty, StringProperty
-from kivy.uix.camera import Camera
+from kivy.properties import NumericProperty, StringProperty, DictProperty
+# from kivy.uix.camera import Camera
 from datetime import timedelta
+from kivy.uix.tabbedpanel import TabbedPanel
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.button import Button
+# from kivy.atlas import Atlas
+from kivy.config import Config
 import Cube
+
+
+# Colores de las piezas
+# Color = {
+#     'U': [1, 1, 1, 1], 'L': [.95, .61, .07, 1], 'F': [.02, .65, .42, 1],
+#     'R': [.91, .34, .34, 1], 'B': [0, .69, .94, 1], 'D': [1, 1, .31, 1]
+# }
+
+Piece = {}
 
 
 class CubeSolver(BoxLayout):
 
     scramble = StringProperty(Cube.scramble())
+    database = DictProperty()
     time = NumericProperty(0)
+    timer_button = StringProperty('atlas://resources/images/elements/play')
+    # Guarda el tiempo cuando pausas el timer
+    time_stop = 0
     running = False
 
     def __init__(self, **kwargs):
@@ -24,20 +42,40 @@ class CubeSolver(BoxLayout):
         self.time = round(self.time + dt, 2)
 
     def start(self):
-        if not self.running:
+        if not self.running and self.time_stop == 0:
             self.running = True
             # Resetting the timer before starting again
             self.time = 0
             # Starting the timer
             Clock.schedule_interval(self.tick, 0.01)
-        else:  # Timer already running, so stop the time
-            self.running = False
-            self.stop()
-            # Get a new Scramble
-            Clock.schedule_once(self.set_scramble)
+            Clock.schedule_once(self.get_button)
+        else:
+            # Resetea el tiempo en stop
+            self.time_stop = 0
 
     def stop(self):
-        Clock.unschedule(self.tick)
+        if self.running:
+            # Timer already running, so stop the time
+            self.running = False
+            # Guarda el tiempo del timer cuando
+            self.time_stop = self.time
+            # Save time and scramble to database
+            self.database[self.scramble] = self.time_format(self.time)
+            # Stop timer by removing the event from the scheduler
+            print(self.database)
+            Clock.unschedule(self.tick)
+            # Get a new Scramble and play/stop button's root direction
+            Clock.schedule_once(self.set_scramble)
+            Clock.schedule_once(self.get_button)
+
+    def get_button(self, *args):
+       pause_button = 'atlas://resources/images/elements/stop'
+       play_button = 'atlas://resources/images/elements/play'
+       if self.running:
+           self.timer_button = pause_button
+       else:
+           self.timer_button = play_button
+
 
     def set_scramble(self, *args):
         self.scramble = Cube.scramble()
@@ -62,15 +100,44 @@ class CubeSolver(BoxLayout):
         # Time is in seconds
         return str(timedelta(seconds=time))[5:10]
 
-
 class Tab(BoxLayout, AndroidTabsBase):
     """This is used to create a Tab"""
     pass
+
+class UserStats(TabbedPanel):
+    pass
+
+class header(Label):
+    def __init__(self, **kwargs):
+        super(header, self).__init__(**kwargs)
+        self.size = self.size
+
+class Face(GridLayout):
+    '''Esta es para mostrar los stats '''
+    def __init__(self,**kwargs):
+        super(Face, self).__init__(**kwargs)
+        self.cols = 3
+        self.rows = 3
+        self.padding = [5, 5]
+        self.spacing = [2, 5]
+
+        # for c in Color.values():
+        for i in range(9):
+        # self.add_widget(pieza)
+            self.add_widget(Button(text=' ', background_normal= 'atlas://resources/images/elements/Piece_R'))
+
+class Faces(Face):
+    def __init__(self,**kwargs):
+        super(Faces, self).__init__(**kwargs)
+
+    pass
+
 
 
 class CubeSolverApp(App):
     def build(self):
         cube_solver = Builder.load_file('CubeSolver.kv')
+
         return cube_solver
 
 
