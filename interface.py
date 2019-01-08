@@ -69,13 +69,12 @@ class CubeSolver(BoxLayout):
             Clock.schedule_once(self.get_button)
 
     def get_button(self, *args):
-       pause_button = 'atlas://resources/images/elements/stop'
-       play_button = 'atlas://resources/images/elements/play'
-       if self.running:
-           self.timer_button = pause_button
-       else:
-           self.timer_button = play_button
-
+        pause_button = 'atlas://resources/images/elements/stop'
+        play_button = 'atlas://resources/images/elements/play'
+        if self.running:
+            self.timer_button = pause_button
+        else:
+            self.timer_button = play_button
 
     def set_scramble(self, *args):
         self.scramble = Cube.scramble()
@@ -100,38 +99,63 @@ class CubeSolver(BoxLayout):
         # Time is in seconds
         return str(timedelta(seconds=time))[5:10]
 
+
 class Tab(BoxLayout, AndroidTabsBase):
     """This is used to create a Tab"""
     pass
 
+
 class UserStats(TabbedPanel):
     pass
 
-class header(Label):
-    def __init__(self, **kwargs):
-        super(header, self).__init__(**kwargs)
-        self.size = self.size
 
 class Face(GridLayout):
-    '''Esta es para mostrar los stats '''
-    def __init__(self,**kwargs):
+    """Esta es para mostrar los stats """
+    cube_state = 'UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB'  # Ejemplo de un cubo desarmado
+    center_color = StringProperty()
+
+    def __init__(self, **kwargs):
         super(Face, self).__init__(**kwargs)
         self.cols = 3
         self.rows = 3
         self.padding = [5, 5]
         self.spacing = [2, 5]
+        # Para forzar las piezas a un tamaño especifico
+        self.row_force_default = True
+        self.row_default_height = 20
+        self.col_force_default = True
+        self.col_default_width = 20
 
-        # for c in Color.values():
-        for i in range(9):
-        # self.add_widget(pieza)
-            self.add_widget(Button(text=' ', background_normal= 'atlas://resources/images/elements/Piece_R'))
+        if self.center_color == 'White':
+            for color in self.cube_state[0: 9]:
+                self.add_widget(Button(text=' ', background_normal='atlas://resources/images/elements/Piece_' + color))
+        elif self.center_color == 'Red':
+            for color in self.cube_state[9: 18]:
+                self.add_widget(Button(text=' ', background_normal='atlas://resources/images/elements/Piece_' + color))
+        elif self.center_color == 'Green':
+            for color in self.cube_state[18: 27]:
+                self.add_widget(Button(text=' ', background_normal='atlas://resources/images/elements/Piece_' + color))
+        elif self.center_color == 'Yellow':
+            for color in self.cube_state[27: 36]:
+                self.add_widget(Button(text=' ', background_normal='atlas://resources/images/elements/Piece_' + color))
+        elif self.center_color == 'Orange':
+            for color in self.cube_state[36: 45]:
+                self.add_widget(Button(text=' ', background_normal='atlas://resources/images/elements/Piece_' + color))
+        elif self.center_color == 'Blue':
+            for color in self.cube_state[45:]:
+                self.add_widget(Button(text=' ', background_normal='atlas://resources/images/elements/Piece_' + color))
 
-class Faces(Face):
-    def __init__(self,**kwargs):
-        super(Faces, self).__init__(**kwargs)
 
-    pass
-
+class CubeFaces(BoxLayout):
+    def __init__(self, **kwargs):
+        super(CubeFaces, self).__init__(**kwargs)
+        self.padding = [self.width * .025, 0]
+        self.add_widget(Face(center_color='White'))
+        self.add_widget(Face(center_color='Red'))
+        self.add_widget(Face(center_color='Green'))
+        self.add_widget(Face(center_color='Yellow'))
+        self.add_widget(Face(center_color='Orange'))
+        self.add_widget(Face(center_color='Blue'))
 
 
 class CubeSolverApp(App):
