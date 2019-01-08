@@ -31,70 +31,51 @@ CubeSolver: # BoxLayout
                 ActionButton:
                     text: "About"
     AndroidTabs:
+        # Timer
         Tab:
             on_touch_up: root.start()
             on_touch_down: root.stop()
+
             text: "TIMER"
             orientation: 'vertical'
-#            canvas:
-#                Color:
-#                    rgba: .91, .45, 0 , .4
-#                Line:
-#                    # la pos_y fue tanteada, la pos_x es igual al size_hint - 1 (100%) del tabbed panel
-#                    points: [self.width * 0.03, self.height * 0.63 , self.width * 0.97, self.height * 0.63]
-#                    width: 1.25
 
-#            Label:
-#                text:'Timer'
-#                id: timer_lbl
-#                font_size: 20
-#                color: .25, .25, .25, 1
-#                text_size: self.size
-#                halign: 'left'
-#                padding_x: self.width * 0.03
-
-            BoxLayout:
-                padding: [self.width * .025 , 0]
-                Face:
-                Face:
-                Face:
-                Face:
-                Face:
-                Face:
+            Faces:
+                size_hint: (root.size_hint_x *.85, root.size_hint_y *.55)
+                pos_hint: {'center_x': .5, 'center_y': .8}
+                on_parent: self.draw_face()
+                on_touch_down: self.clear_widgets()
+                on_touch_up: self.draw_face()
 
             Label:
                 text: root.scramble
-                font_size: 18
+                font_name: 'Resources\Fonts\GOTHIC.TTF'
+                font_size: 14
                 color: .25, .25, .25, 1
                 text_size: self.size
                 halign: 'center'
-                valign: 'middle'
+                valign: 'top'
+                size_hint: (root.size_hint_x, .2)
 
             Label:
                 text: root.time_format(root.time)
-                font_size: 75
+                font_size: 60
+                font_name: 'Resources\Fonts\GOTHIC.TTF'
                 color: .25, .25, .25, 1
                 text_size: self.size
                 halign: 'center'
-                valign: 'middle'
-#                padding_y: 50
+                valign: 'top'
 
             Image:
-                size_hint: .8, .8
+                size_hint: .65, .65
                 size: self.size
-                pos_hint: {'center_x': .5, 'center_y': .5}
+                pos_hint: {'center_x': .5, 'center_y':.5}
                 source: root.timer_button
 
         Tab:
             text: "SOLVER"
             # Label:
             #     text: "Hello2"
-#    Button:
-#        background_color: 1,1,0,1
-#        size: self.size
-#        center_x: self.center_x
-#        center_y: root.center_y
-#        on_release: root.start()
+
 
     UserStats:
         size_hint: .97, .97
@@ -106,13 +87,17 @@ CubeSolver: # BoxLayout
 
         TabbedPanelItem:
 #            background_image: 'resources/images/elements/background_white'
-            background_image: 'atlas://resources/images/elements/tabs'
+            background_down: 'atlas://resources/images/elements/tabs'
+            background_normal: 'atlas://resources/images/elements/none'
             text: 'Historial'
             BoxLayout:
                 Button:
-                    text: "Brujeria"
-
+                    text: "Prueba"
+                    background_normal: 'atlas://resources/images/elements/background_white'
+                    background_color: .91, .45, 0 , .6
         TabbedPanelItem:
+            background_down: 'atlas://resources/images/elements/tabs'
+            background_normal: 'atlas://resources/images/elements/none'
             text: 'Estadisticas'
             BoxLayout:
                 Label:

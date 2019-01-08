@@ -4,7 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.lang.builder import Builder
 from kivy.uix.label import Label
 from kivy.clock import Clock
-from kivy.properties import NumericProperty, StringProperty, DictProperty
+from kivy.properties import NumericProperty, StringProperty, DictProperty, ObjectProperty
 # from kivy.uix.camera import Camera
 from datetime import timedelta
 from kivy.uix.tabbedpanel import TabbedPanel
@@ -12,21 +12,59 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 # from kivy.atlas import Atlas
 from kivy.config import Config
+from  kivy.uix.image import Image
 import Cube
 
 
-# Colores de las piezas
-# Color = {
-#     'U': [1, 1, 1, 1], 'L': [.95, .61, .07, 1], 'F': [.02, .65, .42, 1],
-#     'R': [.91, .34, .34, 1], 'B': [0, .69, .94, 1], 'D': [1, 1, .31, 1]
-# }
+# Esta variable es para acceder a los metodos de la clase
+Cubo = Cube.Cube()
+# Variable global para el cubo en notación kociemba
+cube_state = ''
 
-Piece = {}
+
+class Face(GridLayout):
+    '''Esta es para mostrar los stats '''
+    pieces = StringProperty('')
+
+    def __init__(self,**kwargs):
+        super(Face, self).__init__(**kwargs)
+        self.cols = 3
+        self.rows = 3
+        self.padding = [18, 5]
+        self.spacing = [3, 3]
+        # Para forzar las piezas a un tamaño especifico
+        self.row_force_default = True
+        self.row_default_height = 12
+        self.col_force_default = True
+        self.col_default_width = 12
+
+        for i in self.pieces:
+            self.add_widget(Image(source='atlas://resources/images/elements/Piece_' + i))
+
+
+class Faces(BoxLayout):
+    """Dibuja todas las caras"""
+    test = []
+    def __init__(self, **kwargs):
+        super(Faces, self).__init__(**kwargs)
+        self.orientation = 'horizontal'
+
+
+    def draw_face(self, *args):
+        cube_state = Cubo.kociemba_state()
+
+        # self.clear_widgets()
+        for i in range(6):
+            cara = Face(pieces=cube_state[i * 9: (i + 1) * 9])
+            self.test.append(cara)
+            self.add_widget(cara)
+
 
 
 class CubeSolver(BoxLayout):
 
-    scramble = StringProperty(Cube.scramble())
+    faces = Faces()
+    scramble = StringProperty(Cubo.shuffle())
     database = DictProperty()
     time = NumericProperty(0)
     timer_button = StringProperty('atlas://resources/images/elements/play')
@@ -36,7 +74,6 @@ class CubeSolver(BoxLayout):
 
     def __init__(self, **kwargs):
         super(CubeSolver, self).__init__(**kwargs)
-
     def tick(self, dt):
         """Gets Delta time from the CLock object and adds it to the time"""
         self.time = round(self.time + dt, 2)
@@ -68,6 +105,7 @@ class CubeSolver(BoxLayout):
             Clock.schedule_once(self.set_scramble)
             Clock.schedule_once(self.get_button)
 
+
     def get_button(self, *args):
        pause_button = 'atlas://resources/images/elements/stop'
        play_button = 'atlas://resources/images/elements/play'
@@ -78,7 +116,7 @@ class CubeSolver(BoxLayout):
 
 
     def set_scramble(self, *args):
-        self.scramble = Cube.scramble()
+        self.scramble = Cubo.shuffle()
 
     @staticmethod
     def time_format(time):
@@ -112,32 +150,10 @@ class header(Label):
         super(header, self).__init__(**kwargs)
         self.size = self.size
 
-class Face(GridLayout):
-    '''Esta es para mostrar los stats '''
-    def __init__(self,**kwargs):
-        super(Face, self).__init__(**kwargs)
-        self.cols = 3
-        self.rows = 3
-        self.padding = [5, 5]
-        self.spacing = [2, 5]
-
-        # for c in Color.values():
-        for i in range(9):
-        # self.add_widget(pieza)
-            self.add_widget(Button(text=' ', background_normal= 'atlas://resources/images/elements/Piece_R'))
-
-class Faces(Face):
-    def __init__(self,**kwargs):
-        super(Faces, self).__init__(**kwargs)
-
-    pass
-
-
 
 class CubeSolverApp(App):
     def build(self):
         cube_solver = Builder.load_file('CubeSolver.kv')
-
         return cube_solver
 
 

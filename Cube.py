@@ -68,7 +68,6 @@ class Cube:
 
     def mov(self, letra):
         if letra == 'R':
-            # var temporal para almacenar el valor de la verde
             self.green[2::3], self.yellow[2::3], self.blue[::3], self.white[2::3] = \
                 self.yellow[2::3], reversed(self.blue[::3]), reversed(self.white[2::3]), self.green[2::3]
             self.red = rot(self.red)
@@ -166,6 +165,18 @@ class Cube:
         self.mov_sq(secuencia)
         return secuencia
 
+    def kociemba_state(self):
+        """
+        Enumera los elementos de cada cara en el orden: blanco rojo, verde, amarillo, naranja y azul respectivamente
+        y retorna un string con dichos elementos. un cubo resuelto produciria el siguiente string:
+        UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB
+        """
+        cube_pattern = self.white + self.red + self.green + self.yellow + self.orange + self.blue
+        kociemba_sequence = ''
+        for j in cube_pattern:
+            kociemba_sequence += j[1]
+        return kociemba_sequence
+
     def solve(self):
         """
         Enumera los elementos de cada cara en el orden: blanco rojo, verde, amarillo, naranja y azul respectivamente
@@ -175,12 +186,12 @@ class Cube:
         el mismo.
         """
 
-        kociemba_sequence = ''
-        cube_pattern = self.white + self.red + self.green + self.yellow + self.orange + self.blue
-        for j in cube_pattern:
-            kociemba_sequence += j[1]
+        # kociemba_sequence = ''
+        # cube_pattern = self.white + self.red + self.green + self.yellow + self.orange + self.blue
+        # for j in cube_pattern:
+        #     kociemba_sequence += j[1]
 
-        solution = kociemba.solve(kociemba_sequence)
+        solution = kociemba.solve(self.kociemba_state())
         self.mov_sq(solution)
         return solution
 
@@ -227,7 +238,7 @@ def rot(face, deg=90):
     elif deg == -90:
         for i in range(3):
             ''' Aquí coloco el 2-i par aque se intercambien las columnas en orden inverso al de las filas
-            esto es porque la rotacion en scmr '''
+            esto es porque la rotacion en SCMR '''
             face_aux.extend(face[2 - i::3])
     elif deg == 180:
         # Rotacion de 180
@@ -236,7 +247,6 @@ def rot(face, deg=90):
         # Hmm ... por si acaso
         face_aux = face
     return face_aux
-
 
 if __name__ =='__main__':
     cubo = Cube()
