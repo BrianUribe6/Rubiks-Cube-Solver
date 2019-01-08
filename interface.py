@@ -2,31 +2,24 @@ from kivy.app import App
 from kivy.garden.androidtabs import *
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang.builder import Builder
-from kivy.uix.label import Label
 from kivy.clock import Clock
-from kivy.properties import NumericProperty, StringProperty, DictProperty, ObjectProperty
+from kivy.properties import NumericProperty, StringProperty, DictProperty
 # from kivy.uix.camera import Camera
 from datetime import timedelta
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
-# from kivy.atlas import Atlas
-from kivy.config import Config
-from  kivy.uix.image import Image
+from kivy.uix.image import Image
 import Cube
-
 
 # Esta variable es para acceder a los metodos de la clase
 Cubo = Cube.Cube()
 # Variable global para el cubo en notación kociemba
-cube_state = ''
-
 
 class Face(GridLayout):
-    '''Esta es para mostrar los stats '''
+    """Esta es para mostrar los stats """
     pieces = StringProperty('')
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         super(Face, self).__init__(**kwargs)
         self.cols = 3
         self.rows = 3
@@ -45,10 +38,10 @@ class Face(GridLayout):
 class Faces(BoxLayout):
     """Dibuja todas las caras"""
     test = []
+
     def __init__(self, **kwargs):
         super(Faces, self).__init__(**kwargs)
         self.orientation = 'horizontal'
-
 
     def draw_face(self, *args):
         cube_state = Cubo.kociemba_state()
@@ -60,9 +53,7 @@ class Faces(BoxLayout):
             self.add_widget(cara)
 
 
-
 class CubeSolver(BoxLayout):
-
     faces = Faces()
     scramble = StringProperty(Cubo.shuffle())
     database = DictProperty()
@@ -74,6 +65,7 @@ class CubeSolver(BoxLayout):
 
     def __init__(self, **kwargs):
         super(CubeSolver, self).__init__(**kwargs)
+
     def tick(self, dt):
         """Gets Delta time from the CLock object and adds it to the time"""
         self.time = round(self.time + dt, 2)
@@ -105,15 +97,13 @@ class CubeSolver(BoxLayout):
             Clock.schedule_once(self.set_scramble)
             Clock.schedule_once(self.get_button)
 
-
     def get_button(self, *args):
-       pause_button = 'atlas://resources/images/elements/stop'
-       play_button = 'atlas://resources/images/elements/play'
-       if self.running:
-           self.timer_button = pause_button
-       else:
-           self.timer_button = play_button
-
+        pause_button = 'atlas://resources/images/elements/stop'
+        play_button = 'atlas://resources/images/elements/play'
+        if self.running:
+            self.timer_button = pause_button
+        else:
+            self.timer_button = play_button
 
     def set_scramble(self, *args):
         self.scramble = Cubo.shuffle()
@@ -138,17 +128,14 @@ class CubeSolver(BoxLayout):
         # Time is in seconds
         return str(timedelta(seconds=time))[5:10]
 
+
 class Tab(BoxLayout, AndroidTabsBase):
     """This is used to create a Tab"""
     pass
 
+
 class UserStats(TabbedPanel):
     pass
-
-class header(Label):
-    def __init__(self, **kwargs):
-        super(header, self).__init__(**kwargs)
-        self.size = self.size
 
 
 class CubeSolverApp(App):

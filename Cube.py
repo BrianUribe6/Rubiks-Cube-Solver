@@ -2,7 +2,6 @@ from random import randint
 import kociemba
 
 
-
 class Cube:
     def __init__(self):
         self.white = ['%dU' % (w + 1) for w in range(9)]
@@ -166,11 +165,10 @@ class Cube:
         return secuencia
 
     def kociemba_state(self):
-        """
-        Enumera los elementos de cada cara en el orden: blanco rojo, verde, amarillo, naranja y azul respectivamente
+        """Enumera los elementos de cada cara en el orden: blanco rojo, verde, amarillo, naranja y azul respectivamente
         y retorna un string con dichos elementos. un cubo resuelto produciria el siguiente string:
-        UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB
-        """
+        UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB """
+
         cube_pattern = self.white + self.red + self.green + self.yellow + self.orange + self.blue
         kociemba_sequence = ''
         for j in cube_pattern:
@@ -178,22 +176,20 @@ class Cube:
         return kociemba_sequence
 
     def solve(self):
-        """
-        Enumera los elementos de cada cara en el orden: blanco rojo, verde, amarillo, naranja y azul respectivamente
-        y retorna un string con dichos elementos. un cubo resuelto produciria el siguiente string:
-        UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB
-        Una vez obtenido el patron del cubo se utiliza el algoritmo de kociemba para obtener la solucion y se ejecuta
-        el mismo.
-        """
+        """utiliza el metodo de kociemba para obtener la solucion"""
 
-        # kociemba_sequence = ''
-        # cube_pattern = self.white + self.red + self.green + self.yellow + self.orange + self.blue
-        # for j in cube_pattern:
-        #     kociemba_sequence += j[1]
-
-        solution = kociemba.solve(self.kociemba_state())
+        kociemba_sequence = self.kociemba_state()
+        solution = kociemba.solve(kociemba_sequence)
         self.mov_sq(solution)
         return solution
+
+    def reset(self):
+        self.white = ['%dU' % (w + 1) for w in range(9)]
+        self.red = ['%d%s' % (r + 1, 'R') for r in range(9)]
+        self.green = ['%d%s' % (g + 1, 'F') for g in range(9)]
+        self.yellow = ['%d%s' % (y + 1, 'D') for y in range(9)]
+        self.orange = ['%d%s' % (o + 1, 'L') for o in range(9)]
+        self.blue = ['%d%s' % (b + 1, 'B') for b in range(9)]
 
 
 def scramble():
@@ -201,8 +197,8 @@ def scramble():
     separado por espacios. El algoritmo toma en cuenta el movimiento realizado anteriormente y evita repetirlo.
     Todos los movimientos que contengan la misma designacion son considerados iguales."""
 
-    cube_moves = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'",
-                 "B2"]
+    cube_moves = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2",
+                  "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2"]
     scramble_size = 20
     scramble_algorithm = ""
     prev_moves = set()
@@ -248,15 +244,16 @@ def rot(face, deg=90):
         face_aux = face
     return face_aux
 
+
 if __name__ =='__main__':
+
     cubo = Cube()
     scramble_alg = cubo.shuffle()
     print("Scramble:", scramble_alg)
+    print(cubo.kociemba_state())
     print('')
     cubo.show()
     print('')
-    solution = cubo.solve()
-    print(len(solution.split()))
-    print("Solucion:", solution)
+    print("Solucion:", cubo.solve())
     print('')
     cubo.show()
