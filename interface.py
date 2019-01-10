@@ -9,6 +9,8 @@ from datetime import timedelta
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
+from kivy.uix.widget import Widget
+from kivy.uix.label import Label
 import Cube
 
 # Esta variable es para acceder a los metodos de la clase
@@ -23,7 +25,7 @@ class Face(GridLayout):
         super(Face, self).__init__(**kwargs)
         self.cols = 3
         self.rows = 3
-        self.padding = [18, 5]
+        self.padding = [0, 5]
         self.spacing = [3, 3]
         # Para forzar las piezas a un tamaño especifico
         self.row_force_default = True
@@ -37,7 +39,6 @@ class Face(GridLayout):
 
 class Faces(BoxLayout):
     """Dibuja todas las caras"""
-    test = []
 
     def __init__(self, **kwargs):
         super(Faces, self).__init__(**kwargs)
@@ -46,10 +47,8 @@ class Faces(BoxLayout):
     def draw_face(self, *args):
         cube_state = Cubo.kociemba_state()
 
-        # self.clear_widgets()
         for i in range(6):
             cara = Face(pieces=cube_state[i * 9: (i + 1) * 9])
-            self.test.append(cara)
             self.add_widget(cara)
 
 
@@ -137,11 +136,13 @@ class Tab(BoxLayout, AndroidTabsBase):
 class UserStats(TabbedPanel):
     pass
 
+class Header(Label):
+    """Sub-titulo de las pestañas"""
+    pass
 
 class CubeSolverApp(App):
     def build(self):
-        cube_solver = Builder.load_file('CubeSolver.kv')
-        return cube_solver
+        return CubeSolver()
 
 
 if __name__ == '__main__':
