@@ -1,9 +1,9 @@
 #:import timedelta datetime.timedelta
 #from kivy.core.window import Window
+#:import write interface.write
 
 CubeSolver: # BoxLayout
     orientation: 'vertical'
-#    on_touch_down: root.start()
     canvas:
         Color:
             rgba: 0.95,0.95,0.95,1
@@ -19,6 +19,8 @@ CubeSolver: # BoxLayout
             ActionPrevious:
                 title: 'Action Bar'
                 with_previous: False
+            ActionButton:
+                text: 'Historial'
             ActionOverflow:
                 overflow_image: 'atlas://resources/images/elements/menu'
 #                allow_stretch: False
@@ -35,7 +37,6 @@ CubeSolver: # BoxLayout
         Tab:
             on_touch_up: root.start()
             on_touch_down: root.stop()
-
             text: "TIMER"
             orientation: 'vertical'
 
@@ -84,17 +85,6 @@ CubeSolver: # BoxLayout
         background_color: 0.95,0.95,0.95,1
         do_default_tab: False
 
-
-        TabbedPanelItem:
-#            background_image: 'resources/images/elements/background_white'
-            background_down: 'atlas://resources/images/elements/tabs'
-            background_normal: 'atlas://resources/images/elements/none'
-            text: 'Historial'
-            BoxLayout:
-                Button:
-                    text: "Prueba"
-                    background_normal: 'atlas://resources/images/elements/background_white'
-                    background_color: .91, .45, 0 , .6
         TabbedPanelItem:
             background_down: 'atlas://resources/images/elements/tabs'
             background_normal: 'atlas://resources/images/elements/none'

@@ -6,17 +6,32 @@ from kivy.clock import Clock
 from kivy.properties import NumericProperty, StringProperty, DictProperty
 # from kivy.uix.camera import Camera
 from datetime import timedelta
-from kivy.uix.tabbedpanel import TabbedPanel
+from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
+from kivy.uix.button import Button
+from kivy.uix.popup import Popup
 import Cube
+import pickle
+
 
 # Esta variable es para acceder a los metodos de la clase
 Cubo = Cube.Cube()
-# Variable global para el cubo en notación kociemba
+
+
+def write(info, file_name):
+    with open(file_name, 'wb') as f:
+        pickle.dump(info, f)
+
+
+def load(file_name):
+    with open(file_name, 'rb') as f:
+        info = pickle.load(f)
+    return info
+
 
 class Face(GridLayout):
-    """Esta es para mostrar los stats """
+    """Agrega """
     pieces = StringProperty('')
 
     def __init__(self, **kwargs):
@@ -37,34 +52,29 @@ class Face(GridLayout):
 
 class Faces(BoxLayout):
     """Dibuja todas las caras"""
-    test = []
 
     def __init__(self, **kwargs):
         super(Faces, self).__init__(**kwargs)
         self.orientation = 'horizontal'
 
-    def draw_face(self, *args):
+    def draw_face(self):
         cube_state = Cubo.kociemba_state()
 
-        # self.clear_widgets()
         for i in range(6):
             cara = Face(pieces=cube_state[i * 9: (i + 1) * 9])
-            self.test.append(cara)
             self.add_widget(cara)
 
 
 class CubeSolver(BoxLayout):
     faces = Faces()
     scramble = StringProperty(Cubo.shuffle())
-    database = DictProperty()
     time = NumericProperty(0)
+    database = load('.database.times')
     timer_button = StringProperty('atlas://resources/images/elements/play')
     # Guarda el tiempo cuando pausas el timer
     time_stop = 0
     running = False
-
-    def __init__(self, **kwargs):
-        super(CubeSolver, self).__init__(**kwargs)
+    database_name = ".database.times"
 
     def tick(self, dt):
         """Gets Delta time from the CLock object and adds it to the time"""
@@ -90,12 +100,14 @@ class CubeSolver(BoxLayout):
             self.time_stop = self.time
             # Save time and scramble to database
             self.database[self.scramble] = self.time_format(self.time)
+            # self.database.clear()
+            write(self.database, self.database_name)
             # Stop timer by removing the event from the scheduler
-            print(self.database)
             Clock.unschedule(self.tick)
             # Get a new Scramble and play/stop button's root direction
             Clock.schedule_once(self.set_scramble)
             Clock.schedule_once(self.get_button)
+            # Clock.schedule_once(UserStats().add_time(layout, self.scramble, self.time_format(self.time)))
 
     def get_button(self, *args):
         pause_button = 'atlas://resources/images/elements/stop'
@@ -134,8 +146,25 @@ class Tab(BoxLayout, AndroidTabsBase):
     pass
 
 
-class UserStats(TabbedPanel):
+class ItemList(BoxLayout):
     pass
+
+
+class UserStats(TabbedPanel):
+    def __init__(self, **kwargs):
+        super(UserStats, self).__init__(**kwargs)
+        database = load('.database.times')
+        historial_panel = TabbedPanelItem(text='Historial',
+                                          background_down='atlas://resources/images/elements/tabs',
+                                          background_normal='atlas://resources/images/elements/none')
+        layout = BoxLayout(orientation='vertical')
+        # for scramble, time in database.items():
+        #     add_time(scramble, time)
+
+        historial_panel.add_widget(layout)
+        self.add_widget(historial_panel)
+
+    # def add_time(self):
 
 
 class CubeSolverApp(App):
