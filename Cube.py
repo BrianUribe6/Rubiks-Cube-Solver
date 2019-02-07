@@ -67,7 +67,6 @@ class Cube:
 
     def mov(self, letra):
         if letra == 'R':
-            # var temporal para almacenar el valor de la verde
             self.green[2::3], self.yellow[2::3], self.blue[::3], self.white[2::3] = \
                 self.yellow[2::3], reversed(self.blue[::3]), reversed(self.white[2::3]), self.green[2::3]
             self.red = rot(self.red)
@@ -165,23 +164,32 @@ class Cube:
         self.mov_sq(secuencia)
         return secuencia
 
-    def solve(self):
-        """
-        Enumera los elementos de cada cara en el orden: blanco rojo, verde, amarillo, naranja y azul respectivamente
+    def kociemba_state(self):
+        """Enumera los elementos de cada cara en el orden: blanco rojo, verde, amarillo, naranja y azul respectivamente
         y retorna un string con dichos elementos. un cubo resuelto produciria el siguiente string:
-        UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB
-        Una vez obtenido el patron del cubo se utiliza el algoritmo de kociemba para obtener la solucion y se ejecuta
-        el mismo.
-        """
+        UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB """
 
-        kociemba_sequence = ''
         cube_pattern = self.white + self.red + self.green + self.yellow + self.orange + self.blue
+        kociemba_sequence = ''
         for j in cube_pattern:
             kociemba_sequence += j[1]
+        return kociemba_sequence
 
+    def solve(self):
+        """utiliza el metodo de kociemba para obtener la solucion"""
+
+        kociemba_sequence = self.kociemba_state()
         solution = kociemba.solve(kociemba_sequence)
         self.mov_sq(solution)
         return solution
+
+    def reset(self):
+        self.white = ['%dU' % (w + 1) for w in range(9)]
+        self.red = ['%d%s' % (r + 1, 'R') for r in range(9)]
+        self.green = ['%d%s' % (g + 1, 'F') for g in range(9)]
+        self.yellow = ['%d%s' % (y + 1, 'D') for y in range(9)]
+        self.orange = ['%d%s' % (o + 1, 'L') for o in range(9)]
+        self.blue = ['%d%s' % (b + 1, 'B') for b in range(9)]
 
 
 def scramble():
@@ -189,22 +197,31 @@ def scramble():
     separado por espacios. El algoritmo toma en cuenta el movimiento realizado anteriormente y evita repetirlo.
     Todos los movimientos que contengan la misma designacion son considerados iguales."""
 
-    positions = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'",
-                 "B2"]
+    cube_moves = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2",
+                  "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2"]
     scramble_size = 20
-    scramble_algo = ""
+    scramble_algorithm = ""
+    prev_moves = set()
+    # Generar indice aleatorio
+    index = randint(0, len(cube_moves) - 1)
+    move = cube_moves[index]
+    for i in range(scramble_size):
 
-    # mantiene registro del ultimo movimiento realizado para evitar repeticiones
-    # inicializado en 0 para tener un caracter con el que comparar el primer movimiento
-    prev_move = '0'
-    for move in range(scramble_size):
-        random_idx = randint(0, len(positions) - 1)
-        while prev_move[0] in positions[random_idx]:  # Si el movimiento es repetido
-            random_idx = randint(0, len(positions) - 1)
-        prev_move = positions[random_idx]  # actulizando movimiento anterior
-        scramble_algo += positions[random_idx] + ' '
+        # agregar movimiento a los movientos previos
+        prev_moves.add(move[0])
+        # agregar movimiento al scramble
+        scramble_algorithm += move + ' '
 
-    return scramble_algo
+        # verifica el movimiento nuevo no esté contenido en los previos
+        while move[0] in prev_moves:
+            index = randint(0, len(cube_moves) - 1)
+            move = cube_moves[index]
+
+        # limpia los movimientos previos, el 3 es la cantidad de movimientos repetidos
+        if len(prev_moves) == 3:
+            prev_moves.clear()
+
+    return scramble_algorithm
 
 
 def rot(face, deg=90):
@@ -217,7 +234,7 @@ def rot(face, deg=90):
     elif deg == -90:
         for i in range(3):
             ''' Aquí coloco el 2-i par aque se intercambien las columnas en orden inverso al de las filas
-            esto es porque la rotacion en scmr '''
+            esto es porque la rotacion en SCMR '''
             face_aux.extend(face[2 - i::3])
     elif deg == 180:
         # Rotacion de 180
@@ -228,13 +245,15 @@ def rot(face, deg=90):
     return face_aux
 
 
-cubo = Cube()
-scramble_alg = cubo.shuffle()
-print("Scramble:", scramble_alg)
-print('')
-cubo.show()
-print('')
-solution = cubo.solve()
-print("Solucion:", solution)
-print('')
-cubo.show()
+if __name__ =='__main__':
+
+    cubo = Cube()
+    scramble_alg = cubo.shuffle()
+    print("Scramble:", scramble_alg)
+    print(cubo.kociemba_state())
+    print('')
+    cubo.show()
+    print('')
+    print("Solucion:", cubo.solve())
+    print('')
+    cubo.show()
