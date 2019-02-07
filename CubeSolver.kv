@@ -42,14 +42,13 @@
                 # overflow_color: 0,0,0,1
                 ActionButton:
                     text: "Clear Times"
-                    on_press: root.database.clear() #FIXME database not in root fix reference "root"
+                    on_press: app.clear_database() #FIXME database not in root fix reference "root"
                 ActionButton:
                     text: "Help"
                 ActionButton:
                     text: "About"
     Manager:
         id: screen_manager
-
 
 <Main>:
     AndroidTabs:
@@ -185,11 +184,15 @@
         Solver:
 
 
-
 <Historial>:
-    Label:
-        text: "This is gonna be the historial"
-        color: 0, 0, 0, 1
+    TimesList:
+        viewclass: 'Button'
+        RecycleBoxLayout:
+            default_size: None, dp(56)
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'vertical'
 
 <Manager>:
     main_screen: main_screen
@@ -220,7 +223,6 @@
             pos: self.pos[0], self.pos[1]
             size: self.size[0], 1
 
-
 <Solver>:
     text: "SOLVER"
     canvas:
@@ -231,13 +233,12 @@
             pos: self.pos
     Label:
         text: 'Solver Tab'
-
-
-<TestLayout>:
-    canvas:
-        Color:
-            rgba: .9, .3, .3, 1
-        Rectangle:
-            size: self.size
-            pos: self.pos
-
+<ColStats>:
+    orientation: 'vertical'
+#<TestLayout>:
+#    canvas:
+#        Color:
+#            rgba: .9, .3, .3, 1
+#        Rectangle:
+#            size: self.size
+#            pos: self.pos

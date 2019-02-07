@@ -12,12 +12,14 @@ from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.recycleview import RecycleView
 import Cube
 import pickle
 
 
 # Esta variable es para acceder a los metodos de la clase
 Cubo = Cube.Cube()
+database_name = ".database.times"
 
 
 def write(info, file_name):
@@ -72,7 +74,6 @@ class Manager(ScreenManager):
     pass
 
 
-
 class Main(Screen):
     pass
 
@@ -94,8 +95,7 @@ class Timer(BoxLayout, AndroidTabsBase):
 
     faces = Faces()
     scramble = StringProperty(Cubo.shuffle())
-    database = load('.database.times')
-    database_name = ".database.times"
+    database = load(database_name)
     time = NumericProperty(0)
     timer_button = StringProperty('atlas://resources/images/elements/play')
     time_stop = 0
@@ -126,7 +126,7 @@ class Timer(BoxLayout, AndroidTabsBase):
             # Save time and scramble to database
             self.database[self.scramble] = self.time_format(self.time)
             # self.database.clear()
-            write(self.database, self.database_name)
+            write(self.database, database_name)
             # Stop timer by removing the event from the scheduler
             Clock.unschedule(self.tick)
             # Get a new Scramble and play/stop button's root direction
@@ -175,19 +175,43 @@ class Solver(BoxLayout, AndroidTabsBase):
 class ItemList(BoxLayout):
     pass
 
+
 class ColStats(BoxLayout):
     '''Para posicionar los elementos en columnas'''
-    def __init__(self, **kwargs):
-        super(ColStats, self).__init__(**kwargs)
-        self.orientation = 'vertical'
-
-
-class TestLayout(BoxLayout):
     pass
 
+
+class TimeEntry(BoxLayout):
+    """"Contains an horizontal line of widgets that displays the time and scramble of each solve. It also
+     contains the number correspondent to each value and helpful widgets to eliminate an specific time from
+     the historial, and a popup window that also displays the time and scramble"""
+    pass
+
+
+class TimesList(RecycleView):
+    def __init__(self, **kwargs):
+        """"Deploys a list of TimeEntry from database"""
+        super(TimesList, self).__init__(**kwargs)
+        database = load(database_name)
+        self.data = [{'text': time + ' ' + scramble} for scramble, time in database.items()]
+
+
+# class TestLayout(BoxLayout):
+#     pass
+
+
 class CubeSolverApp(App):
+
     def build(self):
         return MainLayout()
+
+    @ staticmethod
+    def clear_database():
+        """"Clears the dictionary  in .database.times This method can be referenced through the CubeSolver.kv by
+        using app.clear_database"""
+        database = load(database_name)
+        database.clear()
+        write(database, database_name)
 
 
 if __name__ == '__main__':
