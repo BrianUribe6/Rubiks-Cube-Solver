@@ -3,7 +3,7 @@ from kivy.garden.androidtabs import *
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang.builder import Builder
 from kivy.clock import Clock
-from kivy.properties import NumericProperty, StringProperty, DictProperty
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty
 # from kivy.uix.camera import Camera
 from datetime import timedelta
 from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
@@ -11,6 +11,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import Screen, ScreenManager
 import Cube
 import pickle
 
@@ -38,7 +39,7 @@ class Face(GridLayout):
         super(Face, self).__init__(**kwargs)
         self.cols = 3
         self.rows = 3
-        self.padding = [18, 5]
+        self.padding = [5, 5]
         self.spacing = [3, 3]
         # Para forzar las piezas a un tamaño especifico
         self.row_force_default = True
@@ -65,16 +66,40 @@ class Faces(BoxLayout):
             self.add_widget(cara)
 
 
-class CubeSolver(BoxLayout):
+class Manager(ScreenManager):
+    main_screen = ObjectProperty(None)
+    historial = ObjectProperty(None)
+    pass
+
+
+
+class Main(Screen):
+    pass
+
+
+class Historial(Screen):
+    pass
+
+
+class MainLayout(BoxLayout):
+    manager = ObjectProperty(None)
+    sm = ScreenManager()
+    sm.add_widget(Historial(name='hist'))
+    sm.add_widget(Main(name='main'))
+
+
+class Timer(BoxLayout, AndroidTabsBase):
+    """Contains the timer and all the functions necessary to start/ stop timer, generate scramble
+    and image representation showing the 6 faces of a Rubik's Cube after executing a particular scramble."""
+
     faces = Faces()
     scramble = StringProperty(Cubo.shuffle())
-    time = NumericProperty(0)
     database = load('.database.times')
+    database_name = ".database.times"
+    time = NumericProperty(0)
     timer_button = StringProperty('atlas://resources/images/elements/play')
-    # Guarda el tiempo cuando pausas el timer
     time_stop = 0
     running = False
-    database_name = ".database.times"
 
     def tick(self, dt):
         """Gets Delta time from the CLock object and adds it to the time"""
@@ -110,6 +135,7 @@ class CubeSolver(BoxLayout):
             # Clock.schedule_once(UserStats().add_time(layout, self.scramble, self.time_format(self.time)))
 
     def get_button(self, *args):
+        """Renders the play/stop button based on the timer's state(Running/ stopped)"""
         pause_button = 'atlas://resources/images/elements/stop'
         play_button = 'atlas://resources/images/elements/play'
         if self.running:
@@ -118,6 +144,7 @@ class CubeSolver(BoxLayout):
             self.timer_button = play_button
 
     def set_scramble(self, *args):
+        """Moves lists containing """
         self.scramble = Cubo.shuffle()
 
     @staticmethod
@@ -130,47 +157,37 @@ class CubeSolver(BoxLayout):
             return "00.00"
         # Time is in minutes
         elif hour > time >= minute:
-            return str(timedelta(seconds=time))[3:10]
+            return str(timedelta(seconds=time))[3:10]  # string was sliced to show the time in the format 00:00.00
         # Time is in hours
         elif day > time >= hour:
-            return str(timedelta(seconds=time))[:10]
+            return str(timedelta(seconds=time))[:10] # string was sliced to show the time in the format 00:00:00.00
         # Time is in days
         elif time >= day:
             return str(timedelta(seconds=time))
         # Time is in seconds
-        return str(timedelta(seconds=time))[5:10]
+        return str(timedelta(seconds=time))[5:10]  # string was sliced to show the time in the format 00.00
 
 
-class Tab(BoxLayout, AndroidTabsBase):
-    """This is used to create a Tab"""
+class Solver(BoxLayout, AndroidTabsBase):
     pass
 
 
 class ItemList(BoxLayout):
     pass
 
-
-class UserStats(TabbedPanel):
+class ColStats(BoxLayout):
+    '''Para posicionar los elementos en columnas'''
     def __init__(self, **kwargs):
-        super(UserStats, self).__init__(**kwargs)
-        database = load('.database.times')
-        historial_panel = TabbedPanelItem(text='Historial',
-                                          background_down='atlas://resources/images/elements/tabs',
-                                          background_normal='atlas://resources/images/elements/none')
-        layout = BoxLayout(orientation='vertical')
-        # for scramble, time in database.items():
-        #     add_time(scramble, time)
+        super(ColStats, self).__init__(**kwargs)
+        self.orientation = 'vertical'
 
-        historial_panel.add_widget(layout)
-        self.add_widget(historial_panel)
 
-    # def add_time(self):
-
+class TestLayout(BoxLayout):
+    pass
 
 class CubeSolverApp(App):
     def build(self):
-        cube_solver = Builder.load_file('CubeSolver.kv')
-        return cube_solver
+        return MainLayout()
 
 
 if __name__ == '__main__':

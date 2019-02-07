@@ -2,109 +2,214 @@
 #from kivy.core.window import Window
 #:import write interface.write
 
-CubeSolver: # BoxLayout
+
+# Colors
+#:set Gray_light [.95, .95, .95, 1]
+#:set Gray_dark [.25, .25, .25, 1]
+#:set Orange [.91, .45, 0 , 1]
+
+#Fonts
+#:set Primary_font 'Resources\Fonts\GOTHIC.TTF'
+#:set Primary_fontBold 'Resources\Fonts\GOTHICB.TTF'
+
+<MainLayout>: # BoxLayout
+    id: main_layout
+    manager: screen_manager
     orientation: 'vertical'
     canvas:
         Color:
-            rgba: 0.95,0.95,0.95,1
+            rgba: Gray_light
         Rectangle:
             size: self.size
             pos: self.pos
     ActionBar:
+        id: ABar
         pos_hint: {'top':1}
         background_image: 'atlas://resources/images/elements/background_white'
-        background_color: .91, .45, 0 , 1
+        background_color: Orange
         ActionView:
             use_separator: True
             ActionPrevious:
                 title: 'Action Bar'
+                on_press: root.manager.current = 'main'
                 with_previous: False
             ActionButton:
                 text: 'Historial'
+                on_press: root.manager.current = 'historial'
             ActionOverflow:
                 overflow_image: 'atlas://resources/images/elements/menu'
 #                allow_stretch: False
                 # overflow_color: 0,0,0,1
                 ActionButton:
                     text: "Clear Times"
-                    on_press: root.database.clear()
+                    on_press: root.database.clear() #FIXME database not in root fix reference "root"
                 ActionButton:
                     text: "Help"
                 ActionButton:
                     text: "About"
+    Manager:
+        id: screen_manager
+
+
+<Main>:
     AndroidTabs:
         # Timer
-        Tab:
-            on_touch_up: root.start()
-            on_touch_down: root.stop()
+        Timer:
+            on_touch_up: self.start()
+            on_touch_down: self.stop()
             text: "TIMER"
             orientation: 'vertical'
-
+            padding: 0, 20, 0 , 0
+            canvas:
+                Color:
+                    rgba: Gray_light
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
             Faces:
-                size_hint: (root.size_hint_x *.85, root.size_hint_y *.55)
-                pos_hint: {'center_x': .5, 'center_y': .8}
+                size_hint: .9, .05
+                pos_hint: {'center_x': .5, 'center_y': 1}
                 on_parent: self.draw_face()
                 on_touch_down: self.clear_widgets()
                 on_touch_up: self.draw_face()
 
             Label:
-                text: root.scramble
-                font_name: 'Resources\Fonts\GOTHIC.TTF'
+                text: self.parent.scramble
+                font_name: Primary_font
                 font_size: 14
-                color: .25, .25, .25, 1
+                color: Gray_dark
                 text_size: self.size
                 halign: 'center'
-                valign: 'top'
-                size_hint: (root.size_hint_x, .2)
+                valign: 'middle'
+                size_hint: self.size_hint_x, .1
 
             Label:
-                text: root.time_format(root.time)
-                font_size: 60
-                font_name: 'Resources\Fonts\GOTHIC.TTF'
-                color: .25, .25, .25, 1
+                text: self.parent.time_format(self.parent.time)
+                font_size: 85
+                font_name: Primary_font
+                color: Gray_dark
                 text_size: self.size
                 halign: 'center'
                 valign: 'top'
-
+                size_hint: self.size_hint_x, .16
             Image:
-                size_hint: .65, .65
+                size_hint: .15, .15
                 size: self.size
                 pos_hint: {'center_x': .5, 'center_y':.5}
-                source: root.timer_button
-
-        Tab:
-            text: "SOLVER"
-            # Label:
-            #     text: "Hello2"
-
-
-    UserStats:
-        size_hint: .97, .97
-        pos_hint: {'center_x': .5, 'center_y': .5}
-        background_image: 'resources/images/elements/background_white'
-        background_color: 0.95,0.95,0.95,1
-        do_default_tab: False
-
-        TabbedPanelItem:
-            background_down: 'atlas://resources/images/elements/tabs'
-            background_normal: 'atlas://resources/images/elements/none'
-            text: 'Estadisticas'
+                # Para actualizar la imagen por el estado del timer
+                source: self.parent.timer_button
             BoxLayout:
-                Label:
-                    text: 'Second tab content area'
-                Button:
-                    text: 'Button that does nothing'
+            # Grid_Base
+                size_hint: 1, .3
+#                canvas.before:
+#                    Color:
+#                        rgba: 0, .4, .85, .1
+#                    Rectangle:
+#                        size: self.size
+#                        pos: self.pos
+                ColStats:
+                    Image:
+                        size_hint: .85, .85
+                        size: self.size
+                        pos_hint: {'center_x': .5, 'center_y':.5}
+                        source: 'atlas://resources/images/elements/average'
+                    Label:
+                        text: "Media"
+                        font_name: Primary_fontBold
+                        color: Orange
+                    Label:
+                        text: "00:00.00"
+                        font_size: 18
+                        font_name: Primary_fontBold
+                        color: Gray_dark
+                ColStats:
+                    Label:
+                        text: "Ao3"
+                        font_name: Primary_fontBold
+                        color: Orange
+                    Label:
+                        text: "00:00.00"
+                        font_name: Primary_fontBold
+                        color: Gray_dark
 
+                    Label:
+                        text: "Ao5"
+                        font_name: Primary_fontBold
+                        color: Orange
+                    Label:
+                        text: "00:00.00"
+                        font_name: Primary_fontBold
+                        color: Gray_dark
+
+                    Label:
+                        text: "Ao12"
+                        font_name: Primary_fontBold
+                        color: Orange
+                    Label:
+                        text: "00:00.00"
+                        font_name: Primary_fontBold
+                        color: Gray_dark
+                ColStats:
+                    Image:
+                        size_hint: .85, .85
+                        size: self.size
+                        pos_hint: {'center_x': .5, 'center_y':.5}
+                        source: 'atlas://resources/images/elements/best'
+                    Label:
+                        text: "Ao12"
+                        font_name: Primary_fontBold
+                        color: Orange
+                    Label:
+                        text: "00:00.00"
+                        font_name: Primary_fontBold
+                        color: Gray_dark
+
+                ColStats:
+                    Label:
+                        text: "BEST"
+                        font_name: Primary_fontBold
+                        color: Orange
+                    Label:
+                        text: "00:00.00"
+                        font_name: Primary_fontBold
+                        color: Gray_dark
+
+                    Label:
+                        text: "Ao5"
+                        font_name: Primary_fontBold
+                        color: Orange
+                    Label:
+                        text: "00:00.00"
+                        font_name: Primary_fontBold
+                        color: Gray_dark
+        Solver:
+
+
+
+<Historial>:
+    Label:
+        text: "This is gonna be the historial"
+        color: 0, 0, 0, 1
+
+<Manager>:
+    main_screen: main_screen
+    historial: historial
+    Main:
+        id: main_screen
+        name: 'main'
+    Historial:
+        id: historial
+        name: "historial"
 
 <AndroidTabsBar>:
     canvas.before:
         Color:
-            rgba: .91, .45, 0 , 1
+            rgba: Orange
         Rectangle:
             size: self.size
             pos: self.pos
         Color:
-            rgba: 0.95,0.95,0.95,1
+            rgba: Gray_light
         Rectangle:
             pos: self.pos[0], self.pos[1]
             size: self.size[0], 1
@@ -114,10 +219,25 @@ CubeSolver: # BoxLayout
         Rectangle:
             pos: self.pos[0], self.pos[1]
             size: self.size[0], 1
-<Tab>:
+
+
+<Solver>:
+    text: "SOLVER"
     canvas:
         Color:
-            rgba: 0.95,0.95,0.95,1
+            rgba: 0, 0, 0, 1
         Rectangle:
             size: self.size
             pos: self.pos
+    Label:
+        text: 'Solver Tab'
+
+
+<TestLayout>:
+    canvas:
+        Color:
+            rgba: .9, .3, .3, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
